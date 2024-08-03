@@ -6,8 +6,8 @@ springdoc:
 spring:
   mail:
     host: smtp.163.com
-    username: javastudy111@163.com
-    password: VKQFYZMUSUZGSGEG
+    username: 18040520017@163.com
+    password: PILNGVMJPEXNVRDA
   rabbitmq:
     addresses: localhost
     username: guest
@@ -39,3 +39,6 @@ spring:
       origin: '*'
       credentials: false
       methods: '*'
+Account:
+  default_token: 50.0
+

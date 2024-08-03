@@ -25,4 +25,6 @@ public class Account implements BaseData {
     String role;
     @TableField("registerTime")
     Date registerTime;
+    double deposit;
+    double token;
 }

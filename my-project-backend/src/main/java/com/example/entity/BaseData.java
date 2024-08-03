@@ -55,7 +55,17 @@ public interface BaseData {
             Field source = this.getClass().getDeclaredField(field.getName());
             field.setAccessible(true);
             source.setAccessible(true);
-            field.set(target, source.get(this));
-        } catch (IllegalAccessException | NoSuchFieldException ignored) {}
+
+            Object value = source.get(this);
+
+            if (field.getType().isAssignableFrom(String.class) && value instanceof Number) {
+                field.set(target, String.valueOf(value));
+            } else if (field.getType().isAssignableFrom(Double.class) && value instanceof String) {
+                field.set(target, Double.parseDouble((String) value));
+            } else {
+                field.set(target, value);
+            }
+        } catch (IllegalAccessException | NoSuchFieldException ignored) {
+        }
     }
 }
