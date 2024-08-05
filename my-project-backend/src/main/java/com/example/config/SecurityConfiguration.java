@@ -55,6 +55,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(conf -> conf
                         .requestMatchers("/api/auth/**", "/error").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/alipay/**").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
                 .formLogin(conf -> conf

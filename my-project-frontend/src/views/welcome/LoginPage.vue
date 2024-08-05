@@ -72,8 +72,8 @@ const rules = {
 
 function userLogin() {
   formRef.value.validate((isValid) => {
-    if(isValid) {
-      login(form.username, form.password, form.remember, () => router.push("/index"))
+    if(isValid) { //TODO test
+      login(form.username, form.password, form.remember, () => router.push("/a"))
     }
   });
 }
