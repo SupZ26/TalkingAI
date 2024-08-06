@@ -25,6 +25,11 @@ public class TokenServiceImpl implements TokenService {
     @Value("${OpenKey.web_server}")
     String url;
 
+    /**
+     * 从官网查询token的信息
+     * @param apiKey 官网令牌号
+     * @return
+     */
     public Map<String, Object> getToken(String apiKey) {
 
         HttpHeaders headers = new HttpHeaders();

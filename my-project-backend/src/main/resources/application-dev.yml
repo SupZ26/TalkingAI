@@ -51,6 +51,6 @@ alipay:
 #OpenKey
 OpenKey:
   web_server: https://billing.openkey.cloud/api/token
-
+  gpt_server: https://openkey.cloud/v1/chat/completions
 
 
