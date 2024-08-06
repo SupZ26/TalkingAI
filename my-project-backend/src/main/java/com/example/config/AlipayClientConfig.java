@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 支付宝客户端配置类
+ */
 @Configuration
 public class AlipayClientConfig {
     @Autowired

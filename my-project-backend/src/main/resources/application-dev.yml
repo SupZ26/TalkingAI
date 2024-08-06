@@ -48,4 +48,9 @@ alipay:
   alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsakkaFCf3+hASWAnUukctYC+vxL88Usvuosj3LfSZGt/SF24FjY0CISmx3D8qkqrcJCIDjNawgCuQyKl13+td+xNsBn+YAcJJyl9gVC0vawrAw3uMIIusDydFLzTCrHpvlEKvZYG0e004HDwGUSIbei7B4MvEeZI4itLoujke7PGNerOXubAoHL/gYHUE9qs5Pzj3ToDTzWtBmdq2yvzKxJgP1CZmV9vgfTvA4OVMu9IrWBx0KTL1E/sBdazI1FRZ7yIge7WafGRtcahkU8+eHW9ZImn21tQwBydqIl7FUbP/6rsOFHfyFwhrF+WgCCtmJG4JLBeljnCrC/wFNa8iQIDAQAB
   notifyUrl: http://nz3h46.natappfree.cc/alipay/notify
   gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+#OpenKey
+OpenKey:
+  web_server: https://billing.openkey.cloud/api/token
+
+
 
