@@ -17,7 +17,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 
 @Service
@@ -49,7 +48,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
             //向ai发出聊天，等待回应,使用post方式
             AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
             BeanUtils.copyProperties(requestChatVO,aiRequestChatVO);
-            return aIChat(aiRequestChatVO,token);
+            return aIChat(aiRequestChatVO,token,username,topic);
 
         }else {
             //之前有过对话，需要考虑上下文
@@ -69,7 +68,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
             //发送信息进行ai聊天
             AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
             BeanUtils.copyProperties(requestChatVO,aiRequestChatVO);
-            return aIChat(aiRequestChatVO,token);
+            return aIChat(aiRequestChatVO,token,username,topic);
 
         }
 
@@ -81,7 +80,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
      * @return
      */
     @Override
-    public AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token) {
+    public AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token,String username,String topic) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
@@ -90,13 +89,30 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
         ResponseEntity<String> response = restTemplate.exchange(gpt_url, HttpMethod.POST, entity, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            //TODO 把新增的对话信息加入到数据库中
-            return JSON.parseObject(response.getBody(), AIResponseChatVO.class);
+            //把新增的对话信息加入到数据库中
+            //发出的问题
+            String question = aiRequestChatVO.getMessages().get(0).getContent();
+            //回答的问题
+            AIResponseChatVO vo = JSON.parseObject(response.getBody(), AIResponseChatVO.class);
+            String res = vo.getChoices().get(0).getMessage().getContent();
+            addCurrentContents(username,topic,question,res);
+            return vo;
         } else {
             throw new RuntimeException("Failed to get token: " + response.getStatusCode());
         }
     }
 
+    /**
+     * 将本次问答加入到数据库中
+     *
+     * @param question 问题
+     * @param response 回答
+     */
+    @Override
+    public void addCurrentContents(String username, String topic,
+                                   String question, String response) {
+        chatMapper.insert(new Chat(username, topic, question, response));
+    }
 
 
     /**
@@ -109,7 +125,8 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
     public List<Chat> getChatContents(String username, String topic) {
         QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username",username)
-                .eq("topic",topic);
+                .eq("topic",topic)
+                .orderBy(true,true,"dialog_id");
         return chatMapper.selectList(queryWrapper);
     }
 

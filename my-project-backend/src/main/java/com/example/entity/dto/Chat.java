@@ -1,5 +1,6 @@
 package com.example.entity.dto;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("db_chat")
 public class Chat {
-    @TableId("username")
+    @TableField("username")
     String username;
     @TableField("topic")
     String topic;
@@ -23,6 +24,13 @@ public class Chat {
     String question;
     @TableField("response")
     String response;
-    @TableField("dialog_id")
+    @TableId(value = "dialog_id",type = IdType.AUTO)
     int dialog_id;
+
+    public Chat(String username, String topic, String question, String response) {
+        this.username = username;
+        this.topic = topic;
+        this.question = question;
+        this.response = response;
+    }
 }

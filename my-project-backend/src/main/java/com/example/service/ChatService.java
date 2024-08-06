@@ -7,9 +7,7 @@ import com.example.entity.vo.request.RequestChatVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import org.springframework.stereotype.Service;
 
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public interface ChatService extends IService<Chat> {
@@ -23,8 +21,9 @@ public interface ChatService extends IService<Chat> {
     void createUserAndTopic(String username, String topic);
 
     //对接api进行聊天
-    AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token);
+    AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token,String username,String topic);
 
-
+    //将本次问答加入到数据库中
+    void addCurrentContents(String username, String topic, String question, String response);
 
 }
