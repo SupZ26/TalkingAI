@@ -24,12 +24,15 @@ public class AlipayServiceImpl implements AlipayService {
     private String publicKey;
     @Value("${alipay.notifyUrl}")
     private String notifyUrl;
+    @Value("${alipay.returnUrl}")
+    private String returnUrl;
 
     @Autowired
     private AlipayClient alipayClient;
     @Override
     public RestBean<String> pay(Order order){
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        request.setReturnUrl(returnUrl);
         // 异步通知的地址
         request.setNotifyUrl(notifyUrl);
         Map<String,String> map = new HashMap<>();
