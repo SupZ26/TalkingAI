@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Chat;
 import com.example.entity.vo.request.AIRequestChatVO;
 import com.example.entity.vo.request.RequestChatVO;
+import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import com.example.mapper.ChatMapper;
 import com.example.service.ChatService;
@@ -15,9 +16,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements ChatService {
@@ -30,6 +33,8 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     @Value("${OpenKey.gpt_server}")
     String gpt_url;
+
+
 
     /**
      * 用户ai聊天总流程
@@ -114,7 +119,6 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
         chatMapper.insert(new Chat(username, topic, question, response));
     }
 
-
     /**
      * 查询用户在相关主题下的对话记录
      * @param username 用户名
@@ -148,7 +152,48 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
         }
     }
 
+    /**
+     * 修改话题
+     */
+    @Override
+    @Transactional
+    public int updateTopic(UpdateTopicVO updateTopicVO) {
+        System.out.println("===========");
+        System.out.println(updateTopicVO.getUsername());
+        System.out.println(updateTopicVO.getOldTopic());
+        System.out.println(updateTopicVO.getNewTopic());
+        return chatMapper.updateTopic(updateTopicVO.getUsername(), updateTopicVO.getOldTopic(), updateTopicVO.getNewTopic());
+    }
 
+    /**
+     * 查询用户所有拥有的对话主题
+     * @param username
+     * @return
+     */
+    @Override
+    public List<String> findAllTopic(String username) {
+        QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        return chatMapper.selectList(queryWrapper).stream()
+                .map(Chat::getTopic)
+                .distinct()
+                .toList();
+
+    }
+
+    /**
+     * 删除指定的topic
+     * @param username
+     * @param topic
+     * @return
+     */
+    @Override
+    public int deleteTopic(String username, String topic) {
+        QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username)
+                .eq("topic",topic);
+        return chatMapper.delete(queryWrapper);
+    }
 
 
 }

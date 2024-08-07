@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.entity.dto.Chat;
 import com.example.entity.vo.request.AIRequestChatVO;
 import com.example.entity.vo.request.RequestChatVO;
+import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import org.springframework.stereotype.Service;
 
@@ -26,4 +27,12 @@ public interface ChatService extends IService<Chat> {
     //将本次问答加入到数据库中
     void addCurrentContents(String username, String topic, String question, String response);
 
+    //修改话题
+    int updateTopic(UpdateTopicVO updateTopicVO);
+
+    //查询用户所有拥有的对话主题
+    List<String> findAllTopic(String username);
+
+    //删除指定的对话主题
+    int deleteTopic(String username,String topic);
 }
