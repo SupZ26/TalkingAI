@@ -29,7 +29,7 @@ export default {
           body: 'iPhone 15 Pro Max 512GB 原色钛金属'
         },
         {
-          price: '1',
+          price: '0.1',
           subject: 'xiaomi 14 钛金属',
           body: 'xiaomi 14 钛金属 256gb'
         }

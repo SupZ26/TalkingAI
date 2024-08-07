@@ -64,6 +64,7 @@ public class AlipayServiceImpl implements AlipayService {
 
     @Override
     public RestBean<String> payNotify(HttpServletRequest request) {
+
         Map<String, String[]> paramMap = request.getParameterMap();
         Map<String, String> params = new HashMap<>();
         for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {

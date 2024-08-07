@@ -32,7 +32,7 @@ public class AlipayController {
      * @return
      * @throws AlipayApiException
      */
-    @GetMapping("/notify")
+    @PostMapping("/notify")
     public RestBean<String> payNotify(HttpServletRequest request) throws AlipayApiException {
         return alipayService.payNotify(request);
     }
