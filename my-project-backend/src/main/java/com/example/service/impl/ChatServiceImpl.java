@@ -41,6 +41,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
      * @param requestChatVO 用户端相关数据
      * @return
      */
+    public String now_content;
     @Override
     public AIResponseChatVO toChat(RequestChatVO requestChatVO) {
         String username = requestChatVO.getUsername();
@@ -65,7 +66,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
                 questions.append(chatContents.get(i).getQuestion());
             }
             //将老对话与新的对话进行拼接,变成当前问题
-            String now_content = requestChatVO.getMessages().get(0).getContent();
+            now_content = requestChatVO.getMessages().get(0).getContent();
             StringBuilder now_contents = new StringBuilder(now_content);
             StringBuilder later_content = questions.append(now_contents);
             String content = String.valueOf(later_content);
@@ -100,7 +101,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
             //回答的问题
             AIResponseChatVO vo = JSON.parseObject(response.getBody(), AIResponseChatVO.class);
             String res = vo.getChoices().get(0).getMessage().getContent();
-            addCurrentContents(username,topic,question,res);
+            addCurrentContents(username,topic,now_content,res);
             return vo;
         } else {
             throw new RuntimeException("Failed to get token: " + response.getStatusCode());

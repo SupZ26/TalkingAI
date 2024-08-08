@@ -41,6 +41,17 @@ public class AccountDetailsController {
         return RestBean.success(accountDetailsService.findAllAboutUser(username));
     }
 
+    /**
+     * 更新token余额
+     * @param username
+     * @param remaining
+     * @return
+     */
+    @PostMapping("/updateToken")
+    public RestBean<Integer> updateToken(@RequestParam String username,@RequestParam double remaining){
+        return RestBean.success(accountDetailsService.updateToken(username,remaining));
+    }
+
 
 
 

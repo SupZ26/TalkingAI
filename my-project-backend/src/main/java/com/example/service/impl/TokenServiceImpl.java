@@ -1,5 +1,8 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.entity.dto.Account;
+import com.example.mapper.AccountMapper;
 import com.example.service.TokenService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    AccountMapper accountMapper;
 
     @Value("${OpenKey.web_server}")
     String url;
@@ -28,7 +33,6 @@ public class TokenServiceImpl implements TokenService {
     /**
      * 从官网查询token的信息
      * @param apiKey 官网令牌号
-     * @return
      */
     public Map<String, Object> getToken(String apiKey) {
 
@@ -43,9 +47,11 @@ public class TokenServiceImpl implements TokenService {
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
+
             return response.getBody();
         } else {
             throw new RuntimeException("Failed to get token: " + response.getStatusCode());
         }
     }
+
 }

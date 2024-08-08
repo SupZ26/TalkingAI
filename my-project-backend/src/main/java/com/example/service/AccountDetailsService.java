@@ -14,4 +14,7 @@ public interface AccountDetailsService extends IService<Account> {
 
     //查询用户身份的全部信息
     UserDetailsInfoVO findAllAboutUser(String username);
+
+    //更新token余额
+    int updateToken(String username,double remaining);
 }

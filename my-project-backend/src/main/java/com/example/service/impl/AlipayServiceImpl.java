@@ -46,7 +46,6 @@ public class AlipayServiceImpl implements AlipayService {
         request.setBizContent(JSONObject.toJSONString(map));
 
         // 发起支付请求
-        // 发起支付请求
         AlipayTradePagePayResponse response = null;
         try {
             response = alipayClient.pageExecute(request);

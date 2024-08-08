@@ -10,6 +10,7 @@ import com.example.mapper.AccountMapper;
 import com.example.service.AccountDetailsService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -59,5 +60,16 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
             userDetails = account.asViewObject(UserDetailsInfoVO.class);
             return userDetails;
         }
+    }
+
+    /**
+     * 更新token余额
+     * @param username
+     * @param remaining
+     * @return
+     */
+    @Override
+    public int updateToken(String username, double remaining) {
+        return accountMapper.updateToken(username, remaining);
     }
 }
