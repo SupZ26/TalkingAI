@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/alipay/**").permitAll()
                         .requestMatchers("/api/token/**").permitAll()
+                        .requestMatchers("/api/VX/**").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
                 .formLogin(conf -> conf
