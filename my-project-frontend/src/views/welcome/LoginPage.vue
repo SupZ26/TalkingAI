@@ -45,6 +45,10 @@
     <div>
       <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
     </div>
+    <!--TODO 这里的按钮进作为临时测试微信登录的按钮，修改为正式网页时需进行替换-->
+    <div>
+      <el-button style="width: 270px" @click="router.push('/WeChatLogin')" type="warning" plain>微信登录</el-button>
+    </div>
   </div>
 </template>
 

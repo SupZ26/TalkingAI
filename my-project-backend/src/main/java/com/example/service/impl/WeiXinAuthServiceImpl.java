@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponse;
@@ -38,15 +41,13 @@ public class WeiXinAuthServiceImpl implements WeiXinAuthService {
     @Override
     public void callBack(String code) {
 
-        //appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
-        // 构建请求 URL
+        //通过code获取access_token
         String url = String.format("%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
                 accessTokenUrl, appId, appSecret, code);
 
         String response = restTemplate.getForObject(url, String.class);
         if(response.contains("access_token")){
             String accessToken = JsonPath.read(response, "$.access_token");
-            System.out.println(accessToken);
             getUserInfo(accessToken);
         }
         else if(response.contains("errcode")){
@@ -54,8 +55,6 @@ public class WeiXinAuthServiceImpl implements WeiXinAuthService {
         }else {
             throw new RuntimeException("access_token获取时发生了未知错误");
         }
-
-
 
     }
 
@@ -71,7 +70,12 @@ public class WeiXinAuthServiceImpl implements WeiXinAuthService {
                 userInfoUrl,accessToken,"OPENID");
         String response = restTemplate.getForObject(url, String.class);
         if(response.contains("openid")){
-            return JsonPath.read(response, "$.openid");
+            String openId =  JsonPath.read(response, "$.openid");
+            //把openid传给前端监听的地址
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> entity = new HttpEntity<>(openId,headers);
+            restTemplate.postForLocation("http://127.0.0.1:5173/",entity);
         }
         else if(response.contains("errcode")){
             throw new RuntimeException(response);

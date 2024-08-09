@@ -31,6 +31,10 @@ const router = createRouter({
             path: '/a',
             name: 'a',
             component:()=> import('@/views/a.vue')
+        },{
+            path: '/WeChatLogin',
+            name: '/WeChatLogin',
+            component: () => import('@/views/WeChatLogin.vue')
         }
     ]
 })

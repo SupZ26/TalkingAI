@@ -1,3 +1,4 @@
+<!--支付宝测试支付页面-->
 <template>
   <div id="box">
     <div>
