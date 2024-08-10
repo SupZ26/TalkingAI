@@ -27,4 +27,5 @@ public class Account implements BaseData {
     Date registerTime;
     double deposit;
     double token;
+    String openId;
 }

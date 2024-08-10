@@ -1,23 +1,16 @@
 package com.example.service.impl;
 
-import com.example.entity.vo.response.WeiXinAccessTokenVO;
-import com.example.entity.vo.response.WeiXinErrorResponseVO;
-import com.example.entity.vo.response.WeiXinUserInfoVO;
 import com.example.service.WeiXinAuthService;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
+
 
 @Service
 public class WeiXinAuthServiceImpl implements WeiXinAuthService {
@@ -31,6 +24,7 @@ public class WeiXinAuthServiceImpl implements WeiXinAuthService {
     String userInfoUrl;
     @Resource
     RestTemplate restTemplate;
+
 
 
     /**
@@ -76,6 +70,7 @@ public class WeiXinAuthServiceImpl implements WeiXinAuthService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> entity = new HttpEntity<>(openId,headers);
             restTemplate.postForLocation("http://127.0.0.1:5173/",entity);
+            return null;
         }
         else if(response.contains("errcode")){
             throw new RuntimeException(response);

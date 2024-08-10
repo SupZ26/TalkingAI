@@ -17,4 +17,10 @@ public interface AccountDetailsService extends IService<Account> {
 
     //更新token余额
     int updateToken(String username,double remaining);
+
+    //将用户和微信进行绑定
+    int bondWithWeiXin(String username,String openId);
+
+    //查询是否有绑定的微信，如果有直接登录(这里仅能象征性代表微信绑定登录)
+    boolean isPresentOpenId(String username);
 }

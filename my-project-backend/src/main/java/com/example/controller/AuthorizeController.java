@@ -4,6 +4,7 @@ import com.example.entity.RestBean;
 import com.example.entity.vo.request.ConfirmResetVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
+import com.example.service.AccountDetailsService;
 import com.example.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +29,9 @@ public class AuthorizeController {
 
     @Resource
     AccountService accountService;
+
+    @Resource
+    AccountDetailsService accountDetailsService;
 
     /**
      * 请求邮件验证码
@@ -81,6 +85,29 @@ public class AuthorizeController {
     }
 
     /**
+     * 用户与openId进行绑定
+     * @param username
+     * @param openId
+     * @return
+     */
+    @PostMapping("/bondWithWeiXin")
+    public RestBean<String> bondWithWeiXin(@RequestParam String username,@RequestParam String openId){
+        return accountDetailsService.bondWithWeiXin(username, openId) == 1 ?
+                RestBean.success("绑定成功") : RestBean.failure(400,"绑定失败");
+    }
+
+    /**
+     * 查询是否有绑定的微信，如果有直接登录(这里仅能象征性代表微信绑定登录)
+     */
+    @GetMapping("/isPresentOpenId")
+    public RestBean<String> isPresentOpenId(@RequestParam String username){
+        return accountDetailsService.isPresentOpenId(username) ?
+                RestBean.success("登陆成功") : RestBean.failure(400,"登陆失败");
+    }
+
+
+
+    /**
      * 针对于返回值为String作为错误信息的方法进行统一处理
      * @param action 具体操作
      * @return 响应结果
@@ -93,4 +120,6 @@ public class AuthorizeController {
         else
             return RestBean.failure(400, message);
     }
+
+
 }

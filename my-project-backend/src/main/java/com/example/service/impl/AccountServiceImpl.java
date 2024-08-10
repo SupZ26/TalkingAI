@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
@@ -7,6 +8,7 @@ import com.example.entity.vo.request.ConfirmResetVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
 import com.example.mapper.AccountMapper;
+import com.example.service.AccountDetailsService;
 import com.example.service.AccountService;
 import com.example.utils.Const;
 import com.example.utils.FlowUtils;
@@ -50,6 +52,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Resource
     FlowUtils flow;
+
 
     /**
      * 从数据库中通过用户名或邮箱查找用户详细信息
@@ -105,7 +108,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if(this.existsAccountByUsername(username)) return "该用户名已被他人使用，请重新更换";
         String password = passwordEncoder.encode(info.getPassword());
         Account account = new Account(null, info.getUsername(),
-                password, email, Const.ROLE_DEFAULT, new Date(),0.0,default_token);
+                password, email, Const.ROLE_DEFAULT, new Date(),0.0,default_token,null);
         if(!this.save(account)) {
             return "内部错误，注册失败";
         } else {
@@ -204,4 +207,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     private boolean existsAccountByUsername(String username){
         return this.baseMapper.exists(Wrappers.<Account>query().eq("username", username));
     }
+
+
 }

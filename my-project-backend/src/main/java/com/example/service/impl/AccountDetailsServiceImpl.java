@@ -12,6 +12,8 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountDetailsService {
@@ -72,4 +74,34 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
     public int updateToken(String username, double remaining) {
         return accountMapper.updateToken(username, remaining);
     }
+
+    /**
+     * 将用户和微信进行绑定
+     * @param username
+     * @param openId
+     * @return
+     */
+    @Override
+    public int bondWithWeiXin(String username, String openId) {
+        UpdateWrapper<Account> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",username)
+                .set("openId",openId);
+        return accountMapper.update(null,updateWrapper);
+    }
+
+    /**
+     * 查询是否有绑定的微信，如果有直接登录(这里仅能象征性代表微信绑定登录)
+     * @param username
+     * @return
+     */
+    @Override
+    public boolean isPresentOpenId(String username) {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        Account account = accountMapper.selectOne(queryWrapper);
+        Optional<String> optionalOpenId = Optional.ofNullable(account)
+                .map(Account::getOpenId);
+        return optionalOpenId.isPresent();
+    }
+
 }
