@@ -47,10 +47,9 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
         String username = requestChatVO.getUsername();
         String topic = requestChatVO.getTopic();
         String token = requestChatVO.getToken();
-        if(getChatContents(username,topic).get(0).getQuestion() == null){
+        if(getChatContents(username, topic).isEmpty()){
             //之前没有对话的情况，不需要考虑联系上下文
-            //创建主题对话
-            createUserAndTopic(username,topic);
+            now_content = requestChatVO.getMessages().get(0).getContent();
             //向ai发出聊天，等待回应,使用post方式
             AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
             BeanUtils.copyProperties(requestChatVO,aiRequestChatVO);
@@ -133,24 +132,6 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
                 .eq("topic",topic)
                 .orderBy(true,true,"dialog_id");
         return chatMapper.selectList(queryWrapper);
-    }
-
-    /**
-     * 创建用户以及关联的topic
-     *
-     * @param username 用户名
-     * @param topic    对话主题
-     */
-    @Override
-    public void createUserAndTopic(String username, String topic) {
-        UpdateWrapper<Chat> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("username",username)
-                        .set("topic",topic);
-        int update = chatMapper.update(null, updateWrapper);
-        if(update != 0){
-        }else {
-            throw new RuntimeException("创建失败，请重试");
-        }
     }
 
     /**
