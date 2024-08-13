@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import com.example.entity.RestBean;
+import com.example.service.TokenService;
 import com.example.service.impl.TokenServiceImpl;
 import jakarta.annotation.Resource;
 
@@ -15,12 +17,17 @@ public class OpenKeyController {
 
 
     @Autowired
-    private TokenServiceImpl tokenServiceImpl;
+    private TokenService tokenService;
 
     @PostMapping("/getTokenDetails")
-    public Map<String, Object> getTokenDetails(@RequestBody Map<String, String> request) {
-        String apiKey = request.get("api_key");
-        return tokenServiceImpl.getToken(apiKey);
+    public Map<String, Object> getTokenDetails(@RequestParam String username) {
+        return tokenService.getToken(username);
+    }
+
+    @GetMapping("/bindToken")
+    public RestBean<Void> bindToken(@RequestParam String username){
+        tokenService.bindToken(username);
+        return RestBean.success();
     }
 
 }

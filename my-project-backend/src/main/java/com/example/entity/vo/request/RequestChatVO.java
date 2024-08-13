@@ -17,8 +17,6 @@ public class RequestChatVO {
     String username;
     //主题
     String topic;
-    //令牌
-    String token;
     //语言模型
     String model;
     //消息

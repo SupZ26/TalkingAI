@@ -11,6 +11,7 @@ import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import com.example.mapper.ChatMapper;
 import com.example.service.ChatService;
+import com.example.service.TokenService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,8 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     @Value("${OpenKey.gpt_server}")
     String gpt_url;
+    @Resource
+    TokenService tokenService;
 
 
 
@@ -46,7 +49,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
     public AIResponseChatVO toChat(RequestChatVO requestChatVO) {
         String username = requestChatVO.getUsername();
         String topic = requestChatVO.getTopic();
-        String token = requestChatVO.getToken();
+        String token = tokenService.getTokenIdByUsername(username);
         if(getChatContents(username, topic).isEmpty()){
             //之前没有对话的情况，不需要考虑联系上下文
             now_content = requestChatVO.getMessages().get(0).getContent();

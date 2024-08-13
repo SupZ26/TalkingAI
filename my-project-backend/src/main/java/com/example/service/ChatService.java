@@ -18,8 +18,6 @@ public interface ChatService extends IService<Chat> {
     //查询用户在相关主题下的对话记录
     List<Chat> getChatContents(String username, String topic);
 
-    //创建用户以及关联的topic
-    void createUserAndTopic(String username, String topic);
 
     //对接api进行聊天
     AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token,String username,String topic);
