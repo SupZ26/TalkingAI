@@ -58,6 +58,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/alipay/**").permitAll()
                         .requestMatchers("/api/token/**").permitAll()
                         .requestMatchers("/api/VX/**").permitAll()
+                        .requestMatchers("/api/chatAI/toChat").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
                 .formLogin(conf -> conf
