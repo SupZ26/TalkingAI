@@ -38,8 +38,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     @Value("${spring.web.verify.mail-limit}")
     int verifyLimit;
 
-    @Value("${Account.default_token}")
-    double default_token;
+
 
     @Resource
     AmqpTemplate rabbitTemplate;
@@ -108,7 +107,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if(this.existsAccountByUsername(username)) return "该用户名已被他人使用，请重新更换";
         String password = passwordEncoder.encode(info.getPassword());
         Account account = new Account(null, info.getUsername(),
-                password, email, Const.ROLE_DEFAULT, new Date(),0.0,default_token,null);
+                password, email, Const.ROLE_DEFAULT, new Date(),0.0,0.0,null,-1);
         if(!this.save(account)) {
             return "内部错误，注册失败";
         } else {

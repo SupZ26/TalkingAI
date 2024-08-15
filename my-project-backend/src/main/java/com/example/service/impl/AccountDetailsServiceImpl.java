@@ -8,10 +8,13 @@ import com.example.entity.vo.request.AddDepositVO;
 import com.example.entity.vo.request.UserDetailsInfoVO;
 import com.example.mapper.AccountMapper;
 import com.example.service.AccountDetailsService;
+import com.example.utils.Const;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -20,6 +23,8 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
 
     @Resource
     AccountMapper accountMapper;
+
+
 
     /**
      * 用户充值余额
@@ -103,5 +108,8 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
                 .map(Account::getOpenId);
         return optionalOpenId.isPresent();
     }
+
+
+
 
 }
