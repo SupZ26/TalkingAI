@@ -12,8 +12,9 @@ public interface AccountDetailsService extends IService<Account> {
     //充值余额
     String addDeposit(AddDepositVO addDepositVO);
 
-    //查询用户身份的全部信息
+    //根据姓名查询用户身份的全部信息
     UserDetailsInfoVO findAllAboutUser(String username);
+
 
     //更新token余额
     int updateToken(String username,double remaining);
@@ -23,4 +24,6 @@ public interface AccountDetailsService extends IService<Account> {
 
     //查询是否有绑定的微信，如果有直接登录(这里仅能象征性代表微信绑定登录)
     boolean isPresentOpenId(String username);
+
+
 }

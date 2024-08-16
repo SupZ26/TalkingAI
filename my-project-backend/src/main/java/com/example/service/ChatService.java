@@ -7,13 +7,14 @@ import com.example.entity.vo.request.RequestChatVO;
 import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
 @Service
 public interface ChatService extends IService<Chat> {
     //用户AI聊天
-    AIResponseChatVO toChat(RequestChatVO requestChatVO);
+    void toChat(RequestChatVO requestChatVO);
 
     //查询用户在相关主题下的对话记录
     List<Chat> getChatContents(String username, String topic);
@@ -33,4 +34,6 @@ public interface ChatService extends IService<Chat> {
 
     //删除指定的对话主题
     int deleteTopic(String username,String topic);
+
+    public void question(RequestChatVO requestChatVO,String question,SseEmitter sseEmitter);
 }

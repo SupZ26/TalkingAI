@@ -7,6 +7,7 @@ import com.example.entity.vo.response.AIResponseChatVO;
 import com.example.service.ChatService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class ChatController {
      * @return
      */
     @PostMapping("/toChat")
-    public RestBean<AIResponseChatVO> toChat(@RequestBody RequestChatVO requestChatVO){
-        return RestBean.success(chatService.toChat(requestChatVO));
+    public void toChat(@RequestBody RequestChatVO requestChatVO){
+        chatService.toChat(requestChatVO);
     }
 
     /**
@@ -57,5 +58,12 @@ public class ChatController {
             return RestBean.failure(500,"删除错误");
         }
     }
+
+    @GetMapping("/test")
+    public SseEmitter test(@RequestParam("username")String username, @RequestParam("question") String question) {
+        SseEmitter sseEmitter = new SseEmitter();
+        return sseEmitter;
+    }
+
 
 }

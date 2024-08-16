@@ -4,8 +4,10 @@ import com.example.entity.RestBean;
 import com.example.entity.vo.request.ConfirmResetVO;
 import com.example.entity.vo.request.EmailRegisterVO;
 import com.example.entity.vo.request.EmailResetVO;
+import com.example.entity.vo.response.GithubAuthVO;
 import com.example.service.AccountDetailsService;
 import com.example.service.AccountService;
+import com.example.service.GithubAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -32,6 +34,9 @@ public class AuthorizeController {
 
     @Resource
     AccountDetailsService accountDetailsService;
+
+    @Resource
+    GithubAuthService githubAuthService;
 
     /**
      * 请求邮件验证码
@@ -106,6 +111,17 @@ public class AuthorizeController {
     }
 
 
+    /**
+     * 处理github登录回调
+     * @param code
+     * @return
+     */
+    @GetMapping("/github/callback")
+    public void githubCallback(@RequestParam("code") String code){
+        githubAuthService.githubCallback(code);
+    }
+
+
 
     /**
      * 针对于返回值为String作为错误信息的方法进行统一处理
@@ -120,6 +136,8 @@ public class AuthorizeController {
         else
             return RestBean.failure(400, message);
     }
+
+
 
 
 }
