@@ -12,6 +12,7 @@ import com.example.utils.Const;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -26,6 +27,8 @@ import java.util.Optional;
 public class GithubAuthServiceImpl implements GithubAuthService {
     @Resource
     AccountMapper accountMapper;
+    @Resource
+    PasswordEncoder passwordEncoder;
 
     /**
      * github登录回调处理
@@ -47,11 +50,20 @@ public class GithubAuthServiceImpl implements GithubAuthService {
                 .header("X-GitHub-Api-Version", "2022-11-28")
                 .setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7897)))
                 .execute().body();
+        log.info("finalResult: "+finalResult);
         String githubUsername = JsonPath.read(finalResult, "$.login");
         Integer githubId = JsonPath.read(finalResult,"$.id");
 
+
+        String finalResult02 = HttpRequest.get("https://api.github.com/user/emails")
+                .header("Authorization","token "+token)
+                .header("X-GitHub-Api-Version", "2022-11-28")
+                .setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7897)))
+                .execute().body();
+        log.info("finalResult02:"+finalResult02);
+        String githubEmail = JsonPath.read(finalResult02,"$[0].email");
         //查看是否有绑定该id的用户
-        return isBondWithGithub(githubUsername,githubId);
+        return isBondWithGithub(githubUsername,githubId,githubEmail);
     }
 
     /**
@@ -61,7 +73,7 @@ public class GithubAuthServiceImpl implements GithubAuthService {
      * @return
      */
     @Override
-    public String isBondWithGithub(String githubName, Integer githubId) {
+    public String isBondWithGithub(String githubName, Integer githubId,String githubEmail ) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("githubId",githubId);
         Account account = accountMapper.selectOne(queryWrapper);
@@ -72,7 +84,7 @@ public class GithubAuthServiceImpl implements GithubAuthService {
             return account.getUsername();
         }else {
             //创建一个新的角色(默认密码为123456)
-            accountMapper.insert(new Account(null,githubName,"123456",null, Const.ROLE_DEFAULT,new Date(),0.0,0.0,null,githubId));
+            accountMapper.insert(new Account(null,githubName, passwordEncoder.encode("123456"), githubEmail, Const.ROLE_DEFAULT,new Date(),0.0,0.0,null,githubId));
             log.info("用户不存在，已为其创建新用户: "+githubName);
             return githubName;
         }

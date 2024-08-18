@@ -24,8 +24,7 @@ public class WeiXinAuthController {
          *
          * 3）开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
          */
-        System.out.println(signature);
-        System.out.println(nonce);
+
         return echostr;
 
     }

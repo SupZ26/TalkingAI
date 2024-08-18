@@ -9,5 +9,5 @@ public interface GithubAuthService {
     String githubCallback(String code);
 
     //查询是否有人绑定了指定的githubId，如果没有自动创建用户
-    String isBondWithGithub(String githubName,Integer githubId);
+    String isBondWithGithub(String githubName,Integer githubId,String githubEmail);
 }
