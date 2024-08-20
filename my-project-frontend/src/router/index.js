@@ -46,6 +46,11 @@ const router = createRouter({
             name: "charge",
             component: () => import("@/views/charge_list.vue"),
         },
+        {
+            path: "/packages",
+            name: "packages",
+            component: () => import("@/views/package_list.vue"),
+        },
     ],
 });
 

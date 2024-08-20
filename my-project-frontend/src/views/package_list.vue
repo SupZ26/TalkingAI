@@ -1,44 +1,20 @@
 <template>
-    <div id="charge">
-        <div class="charge-content">
-            <h1 style="margin-top: 15vh">充值列表</h1>
+    <div id="packages">
+        <div class="package-content">
+            <h1 style="margin-top: 15vh">套餐列表</h1>
             <div style="margin-left: 20%; margin-right: 20%">
-                <!--
-                <div>
-                    <h3 style="display: inline; padding-top: 30px; padding-bottom: 30px">
-                        充值说明：<span style="color: #555">1元大概xxxTokens</span>
-                    </h3>
-                </div>
-                -->
-
-                <div class="amount-selector">
-                    <h3>充值金额：</h3>
+                <div class="package-selector">
+                    <h3>套餐：</h3>
 
                     <div class="options">
                         <label
-                            v-for="option in amountOptions"
+                            v-for="option in package_options"
                             :key="option.value"
                             class="option"
-                            :class="{ selected: selectedAmount === option.value }"
+                            :class="{ selected: selected_package === option.value }"
                         >
-                            <input type="radio" :value="option.value" v-model="selectedAmount" />
+                            <input type="radio" :value="option.value" v-model="selected_package" />
                             <span>{{ option.label }}</span>
-                        </label>
-                        <label
-                            class="option custom-amount"
-                            :class="{ active: customAmount !== null, selected: selectedAmount === 'custom' }"
-                        >
-                            <input type="radio" value="custom" v-model="selectedAmount" />
-                            <span>自定义金额</span>
-                            <input
-                                type="text"
-                                v-if="selectedAmount === 'custom'"
-                                v-model.number="customAmount"
-                                @input="validateCustomAmount"
-                                min="10"
-                                placeholder="请输入金额"
-                                :disabled="selectedAmount !== 'custom'"
-                            />
                         </label>
                     </div>
                 </div>
@@ -83,18 +59,20 @@ import axios from "axios";
 export default {
     data() {
         return {
-            amountOptions: [
-                { value: 10, label: "10元" },
-                { value: 30, label: "30元" },
+            package_options: [
+                { value: 10, label: "10元1000 Tokens" },
+                { value: 30, label: "30元3500 Tokens" },
                 { value: 50, label: "50元" },
                 { value: 100, label: "100元" },
                 { value: 150, label: "150元" },
                 { value: 200, label: "200元" },
             ],
-            customAmount: null,
-            selectedAmount: 10,
-            paymentMethods: [{ value: "alipay", label: "支付宝" }],
-            selectedPaymentMethod: "alipay",
+            selected_package: 10,
+            paymentMethods: [
+                { value: "remain", label: "余额" },
+                { value: "alipay", label: "支付宝" },
+            ],
+            selectedPaymentMethod: "remain",
             paymentFormHtml: "",
             totalAmount: 0,
         };
@@ -102,38 +80,11 @@ export default {
     computed: {
         // 计算总金额
         totalAmount() {
-            return this.selectedAmount === "custom" ? this.customAmount : this.selectedAmount;
-        },
-    },
-    watch: {
-        // 监听selectedAmount的变化，当选择预设金额时清空自定义金额
-        selectedAmount(newVal) {
-            if (newVal !== "custom") {
-                this.customAmount = null;
-            } else {
-                this.customAmount = 10;
-            }
-        },
-
-        // 监听customAmount的变化，当输入自定义金额时清空预设金额
-
-        customAmount(newVal) {
-            if (newVal !== null) {
-                this.selectedAmount = "custom";
-            }
-            if (this.customAmount !== null && this.customAmount < 10) {
-                this.customAmount = 10;
-            }
+            return this.selectedAmount;
         },
     },
     methods: {
-        pay() {
-            const order = {
-                price: this.totalAmount,
-                subject: `充值${this.totalAmount}元`,
-                body: `通过${this.selectedPaymentMethod}充值${this.totalAmount}元`,
-            };
-
+        ali_pay(order) {
             axios
                 .post("/alipay/pay", order)
                 .then((res) => {
@@ -149,12 +100,27 @@ export default {
                 });
         },
 
-        validateCustomAmount(event) {
-            // 验证输入是否为整数
-            const value = event.target.value;
-            if (!/^\d*$/.test(value)) {
-                // 如果不是整数，则清除非法字符
-                event.target.value = value.replace(/[^0-9]/g, "");
+        remain_pay(order) {
+            axios.post("", order);
+        },
+
+        pay() {
+            const order = {
+                price: this.totalAmount,
+                subject: `购买${this.totalAmount}元套餐`,
+                body: `通过${this.selectedPaymentMethod}购买${this.totalAmount}元套餐`,
+            };
+
+            // check remain
+            if (this.selectedPaymentMethod === remain) {
+                // 从持久化存储中拿到有余额还有多少
+                // ...
+                // 判断余额再往数据库和本地存储中扣除
+                // ...
+
+                this.remain_pay(order);
+            } else {
+                this.ali_pay(order);
             }
         },
     },
@@ -162,14 +128,14 @@ export default {
 </script>
 
 <style scoped>
-#charge {
+#packages {
     font-family: Arial, sans-serif;
     height: 100vh;
     align-items: center;
     background-color: #f5f5f5;
 }
 
-.charge-content {
+.package-content {
     padding: 20px;
     border-radius: 5px;
     margin: 0 auto;
@@ -189,7 +155,7 @@ h3 {
     margin-bottom: 3%;
 }
 
-.amount-selector,
+.package-selector,
 .payment-method {
     display: flex;
     flex-direction: row;
