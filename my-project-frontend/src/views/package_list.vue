@@ -35,16 +35,15 @@
                 </div>
 
                 <div class="summary">
-                    <h3 style="display: inline">
-                        您将支付:
-                        <span class="total-amount">{{ totalAmount }} 元</span>
-                    </h3>
+                    <h4 style="display: inline; text-align: center; color: #555">
+                        您将使用{{ selected_paymethod }}购买<span class="total-amount">{{ selected_package }}元</span
+                        ><span>套餐，获得</span><span class="total-amount">{{ selected_tokens }} tokens</span>
+                    </h4>
                 </div>
 
                 <div class="actions">
-                    <button @click="pay">确认支付</button>
+                    <button @click="pay">确认购买</button>
                 </div>
-                <p style="text-align: center">目前仅支持支付宝付款</p>
             </div>
         </div>
         <div class="payment-form" v-if="paymentFormHtml">
@@ -60,12 +59,12 @@ export default {
     data() {
         return {
             package_options: [
-                { value: 10, label: "10元1000 Tokens" },
-                { value: 30, label: "30元3500 Tokens" },
-                { value: 50, label: "50元" },
-                { value: 100, label: "100元" },
-                { value: 150, label: "150元" },
-                { value: 200, label: "200元" },
+                { value: 10, label: "10元", tokens: 1000 },
+                { value: 30, label: "30元", tokens: 3500 },
+                { value: 50, label: "50元", tokens: 6000 },
+                { value: 100, label: "100元", tokens: 13000 },
+                { value: 150, label: "150元", tokens: 18500 },
+                { value: 200, label: "200元", tokens: 114514 },
             ],
             selected_package: 10,
             paymentMethods: [
@@ -74,13 +73,14 @@ export default {
             ],
             selectedPaymentMethod: "remain",
             paymentFormHtml: "",
-            totalAmount: 0,
         };
     },
     computed: {
-        // 计算总金额
-        totalAmount() {
-            return this.selectedAmount;
+        selected_tokens() {
+            return this.package_options.find((option) => option.value === this.selected_package).tokens;
+        },
+        selected_paymethod() {
+            return this.paymentMethods.find((option) => option.value === this.selectedPaymentMethod).label;
         },
     },
     methods: {
@@ -106,13 +106,13 @@ export default {
 
         pay() {
             const order = {
-                price: this.totalAmount,
-                subject: `购买${this.totalAmount}元套餐`,
-                body: `通过${this.selectedPaymentMethod}购买${this.totalAmount}元套餐`,
+                price: this.selected_package,
+                subject: `购买${this.selected_package}元套餐`,
+                body: `通过${this.selectedPaymentMethod}购买${this.selected_package}元套餐`,
             };
 
             // check remain
-            if (this.selectedPaymentMethod === remain) {
+            if (this.selectedPaymentMethod === "remain") {
                 // 从持久化存储中拿到有余额还有多少
                 // ...
                 // 判断余额再往数据库和本地存储中扣除
@@ -200,7 +200,7 @@ h3 {
 }
 
 .summary {
-    text-align: left;
+    text-align: center;
     margin-bottom: 20px;
 }
 

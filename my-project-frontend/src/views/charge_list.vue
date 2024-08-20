@@ -69,6 +69,8 @@
                     <button @click="pay">确认支付</button>
                 </div>
                 <p style="text-align: center">目前仅支持支付宝付款</p>
+                <!--拿数据-->
+                <p style="text-align: center">当前余额：</p>
             </div>
         </div>
         <div class="payment-form" v-if="paymentFormHtml">
