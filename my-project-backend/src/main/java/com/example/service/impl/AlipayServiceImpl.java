@@ -29,6 +29,12 @@ public class AlipayServiceImpl implements AlipayService {
 
     @Autowired
     private AlipayClient alipayClient;
+
+    /**
+     * 支付接口
+     * @param order 订单信息
+     * @return
+     */
     @Override
     public RestBean<String> pay(Order order){
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
@@ -64,6 +70,11 @@ public class AlipayServiceImpl implements AlipayService {
         }
     }
 
+    /**
+     * 订单状态异步通知
+     * @param request
+     * @return
+     */
     @Override
     public RestBean<String> payNotify(HttpServletRequest request) {
 

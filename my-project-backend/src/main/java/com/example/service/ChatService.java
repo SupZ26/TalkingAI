@@ -20,6 +20,7 @@ public interface ChatService extends IService<Chat> {
     List<Chat> getChatContents(String username, String topic);
 
 
+
     //对接api进行聊天
     AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token,String username,String topic);
 

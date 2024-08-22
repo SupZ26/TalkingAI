@@ -11,6 +11,7 @@ import com.example.service.AccountDetailsService;
 import com.example.utils.Const;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,8 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
 
     @Resource
     AccountMapper accountMapper;
+    @Resource
+    PasswordEncoder passwordEncoder;
 
 
 
@@ -110,6 +113,43 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
     }
 
 
+    /**
+     * 修改用户名
+     * @param oldUsername
+     * @param newUsername
+     * @return
+     */
+    @Override
+    @Transactional
+    public int updateUsername(String oldUsername, String newUsername) {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",newUsername);
+        if(accountMapper.selectOne(queryWrapper) != null)
+            throw new RuntimeException("用户名已经存在，无法修改");
+        UpdateWrapper<Account> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",oldUsername)
+                .set("username",newUsername);
+        return accountMapper.update(null,updateWrapper);
+    }
+
+    /**
+     * 修改密码
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    @Override
+    public int updatePassword(String username,String oldPassword, String newPassword) {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        if(!passwordEncoder.matches(oldPassword,accountMapper.selectOne(queryWrapper).getPassword()))
+            throw new RuntimeException("输入的原密码错误，请重新输入");
+        UpdateWrapper<Account> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",username)
+                .set("password",passwordEncoder.encode(newPassword));
+        return accountMapper.update(null,updateWrapper);
+
+    }
 
 
 }

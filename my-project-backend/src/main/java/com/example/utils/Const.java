@@ -22,6 +22,8 @@ public final class Const {
     public final static String MQ_MAIL = "mail";
     //用户角色
     public final static String ROLE_DEFAULT = "user";
+    //用户默认密码
+    public final static String USER_DEFAULT_PASSWORD = "123456";
 
 
 }

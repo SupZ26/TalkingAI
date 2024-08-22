@@ -59,11 +59,7 @@ public class ChatController {
         }
     }
 
-    @GetMapping("/test")
-    public SseEmitter test(@RequestParam("username")String username, @RequestParam("question") String question) {
-        SseEmitter sseEmitter = new SseEmitter();
-        return sseEmitter;
-    }
+
 
 
 }

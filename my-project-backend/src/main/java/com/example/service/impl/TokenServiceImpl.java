@@ -1,27 +1,29 @@
 package com.example.service.impl;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.entity.dto.Account;
 import com.example.entity.dto.TokenBind;
 import com.example.mapper.AccountMapper;
 import com.example.mapper.TokenBindMapper;
+import com.example.service.AccountDetailsService;
 import com.example.service.TokenService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class TokenServiceImpl implements TokenService {
 
     @Resource
@@ -30,31 +32,25 @@ public class TokenServiceImpl implements TokenService {
     AccountMapper accountMapper;
     @Resource
     TokenBindMapper tokenBindMapper;
+    @Resource
+    AccountDetailsService accountDetailsService;
 
     @Value("${OpenKey.web_server}")
-    String url;
+    String get_token_url;
 
     /**
      * 从官网查询token的信息
      */
-    public Map<String, Object> getToken(String username) {
-        String apiKey = getTokenIdByUsername(username);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("api_key", apiKey);
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Failed to get token: " + response.getStatusCode());
-        }
+    public String getToken(String username) {
+        Map<String,Object> paramMap = new HashMap<>();
+        String api_key = getTokenIdByUsername(username);
+        paramMap.put("api_key",api_key);
+        String json = JSONUtil.toJsonStr(paramMap);
+        String result = HttpRequest.post(get_token_url)
+                        .body(json).execute().body();
+        JSONObject jsonObject = JSONUtil.parseObj(result);
+        log.info(jsonObject.getStr("Remaining"));
+        return jsonObject.getStr("Remaining");
     }
 
     /**
@@ -65,7 +61,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public void bindToken(String username) {
         QueryWrapper<TokenBind> queryWrapper = new QueryWrapper<>();
-        queryWrapper.isNull("username").last("limit 1"); // 查询username为空的记录
+        queryWrapper.eq("username","").last("limit 1");
         TokenBind tokenEntity = tokenBindMapper.selectOne(queryWrapper);
 
         if (tokenEntity != null) {
@@ -87,6 +83,52 @@ public class TokenServiceImpl implements TokenService {
         QueryWrapper<TokenBind> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username",username);
         return tokenBindMapper.selectOne(queryWrapper).getTokenId();
+    }
+
+    /**
+     * 使用余额买key
+     * @param username
+     */
+    @Override
+    @Transactional
+    public void buyKeyByDeposit(String username)  {
+        if(isBindWithToken(username))
+            throw new RuntimeException("该用户已经绑定token，无法再次购买");
+        UpdateWrapper<Account> updateWrapper  = new UpdateWrapper<>();
+        updateWrapper.eq("username",username);
+        try{
+            updateWrapper.setSql("deposit = deposit - 20 ");
+            accountMapper.update(null,updateWrapper);
+        }catch (Exception e){
+           log.info(e.getMessage());
+        }
+        bindToken(username);
+        accountDetailsService.updateToken(username,Double.parseDouble(getToken(username)));
+    }
+
+    /**
+     * 支付宝支付购买key
+     * @param username
+     */
+    @Override
+    @Transactional
+    public void buyKeyByAlipay(String username) {
+        if(isBindWithToken(username))
+            throw new RuntimeException("该用户已经绑定token，无法再次购买");
+        bindToken(username);
+        accountDetailsService.updateToken(username,Double.parseDouble(getToken(username)));
+    }
+
+    /**
+     * 检查用户是否已经绑定了Token
+     * @param username
+     * @return
+     */
+    @Override
+    public boolean isBindWithToken(String username) {
+        QueryWrapper<TokenBind> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        return tokenBindMapper.selectOne(queryWrapper) != null;
     }
 
 

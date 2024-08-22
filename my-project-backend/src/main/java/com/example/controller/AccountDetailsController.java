@@ -4,7 +4,9 @@ import com.example.entity.RestBean;
 import com.example.entity.vo.request.AddDepositVO;
 import com.example.entity.vo.request.UserDetailsInfoVO;
 import com.example.service.AccountDetailsService;
+import com.example.validation.ValidString;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -42,21 +44,25 @@ public class AccountDetailsController {
     }
 
     /**
-     * 更新token余额
-     * @param username
-     * @param remaining
+     * 修改账号名
+     * @param oldUsername
+     * @param newUsername
      * @return
      */
-    @PostMapping("/updateToken")
-    public RestBean<Integer> updateToken(@RequestParam String username,@RequestParam double remaining){
-        return RestBean.success(accountDetailsService.updateToken(username,remaining));
+    @PutMapping("/updateUsername")
+    public RestBean<String> updateUsername(@RequestParam("oldUsername") @ValidString(minLength = 1,maxLength = 10) String oldUsername,
+                                           @RequestParam("newUsername") @ValidString(minLength = 1,maxLength = 10) String newUsername){
+        return accountDetailsService.updateUsername(oldUsername, newUsername) == 1
+                ? RestBean.success("账号名修改成功")
+                : RestBean.failure(500,"账号修改失败");
     }
 
-
-
-
-
-
-
-
+    @PutMapping("/updatePassword")
+    public RestBean<String> updatePassword(@RequestParam("username")@ValidString(minLength = 1,maxLength = 10) String username,
+                                           @RequestParam("oldPassword")@ValidString(minLength = 1,maxLength = 20) String oldPassword,
+                                           @RequestParam("newPassword")@ValidString(minLength = 1,maxLength = 20) String newPassword){
+        return accountDetailsService.updatePassword(username, oldPassword, newPassword) == 1
+                ? RestBean.success("密码修改成功")
+                : RestBean.failure(500,"账号修改失败");
+    }
 }
