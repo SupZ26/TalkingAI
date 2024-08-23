@@ -26,6 +26,21 @@ spring:
         base: 10
         upgrade: 300
         frequency: 30
+    oauth2:
+      client:
+        registration:
+          gitee:
+            client-id: 0bb7105d92911c89607f9d52b3abe6d6b20a6f0564cd838270aaa8db11b141d2
+            client-secret: 9e1638724234086e1cb7b78935512cccd0b2bc1b97005dce4d945286b1097694
+            authorization-grant-type: authorization_code
+            redirect-uri: 'http://localhost:8080/api/auth/gitee/callback'
+            client-name: Gitee
+        provider:
+          gitee:
+            authorization-uri: https://gitee.com/oauth/authorize
+            token-uri: https://gitee.com/oauth/token
+            user-info-uri: https://gitee.com/api/v5/user
+            user-name-attribute: name
     filter:
       order: -100
   web:

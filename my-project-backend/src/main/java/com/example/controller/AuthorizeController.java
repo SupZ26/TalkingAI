@@ -7,6 +7,7 @@ import com.example.entity.vo.request.EmailResetVO;
 import com.example.entity.vo.response.GithubAuthVO;
 import com.example.service.AccountDetailsService;
 import com.example.service.AccountService;
+import com.example.service.GiteeAuthService;
 import com.example.service.GithubAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,7 @@ import java.util.function.Supplier;
 /**
  * 用于验证相关Controller包含用户的注册、重置密码等操作
  */
+@Slf4j
 @Validated
 @RestController
 @RequestMapping("/api/auth")
@@ -37,6 +41,10 @@ public class AuthorizeController {
 
     @Resource
     GithubAuthService githubAuthService;
+
+    @Resource
+    GiteeAuthService giteeAuthService;
+
 
     /**
      * 请求邮件验证码
@@ -119,6 +127,12 @@ public class AuthorizeController {
     @GetMapping("/github/callback")
     public void githubCallback(@RequestParam("code") String code){
         githubAuthService.githubCallback(code);
+    }
+
+
+    @GetMapping("/gitee/callback")
+    public void giteeCallback(@RequestParam("code")String code){
+        giteeAuthService.callback(code);
     }
 
 

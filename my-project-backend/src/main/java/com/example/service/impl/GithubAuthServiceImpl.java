@@ -77,11 +77,13 @@ public class GithubAuthServiceImpl implements GithubAuthService {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("githubId",githubId);
         Account account = accountMapper.selectOne(queryWrapper);
-        Optional<Integer> optionalGithubId = Optional.ofNullable(account)
-                .map(Account::getGithubId);
+        //TODO 已经删除字段，改为了giteeId，以后有机会加上去
+        Optional<Integer> optionalGithubId = null;
+        /*Optional<Integer> optionalGithubId = Optional.ofNullable(account)
+                .map(Account::getGithubId);*/
         if(optionalGithubId.isPresent()){
             log.info("用户已经存在，直接登录");
-            /*Map<String,Object> paramMap = new HashMap<>();
+            Map<String,Object> paramMap = new HashMap<>();
             paramMap.put("username", account.getUsername());
             paramMap.put("password",account.getPassword());
             paramMap.put("remember",false);
@@ -89,12 +91,12 @@ public class GithubAuthServiceImpl implements GithubAuthService {
                     .form(paramMap)
                     .timeout(2000)
                     .execute().body();
-            log.info(finalResult);*/
+            log.info(finalResult);
         }else {
             //创建一个新的角色(默认密码为123456)
             accountMapper.insert(new Account(null,githubName, passwordEncoder.encode(Const.USER_DEFAULT_PASSWORD), githubEmail, Const.ROLE_DEFAULT,new Date(),0.0,0.0,null,githubId));
             log.info("用户不存在，已为其创建新用户: "+githubName);
-            /*Map<String,Object> paramMap = new HashMap<>();
+            Map<String,Object> paramMap = new HashMap<>();
             paramMap.put("username",githubName);
             paramMap.put("password",Const.USER_DEFAULT_PASSWORD);
             paramMap.put("remember",false);
@@ -102,7 +104,7 @@ public class GithubAuthServiceImpl implements GithubAuthService {
                     .form(paramMap)
                     .timeout(2000)
                     .execute().body();
-            log.info(finalResult);*/
+            log.info(finalResult);
         }
     }
 

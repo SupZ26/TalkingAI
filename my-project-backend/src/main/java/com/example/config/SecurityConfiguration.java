@@ -11,24 +11,32 @@ import com.example.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * SpringSecurity相关配置
  */
 @Configuration
+@Slf4j
 public class SecurityConfiguration {
 
     @Resource
@@ -61,6 +69,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/chatAI/toChat").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
+                /*.oauth2Login(conf -> conf
+                        .loginProcessingUrl("/api/auth/gitee/callback")
+                )*/
                 .formLogin(conf -> conf
                         .loginProcessingUrl("/api/auth/login")
                         .failureHandler(this::handleProcess)
@@ -82,6 +93,14 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthenticationFilter, RequestLogFilter.class)
                 .build();
     }
+
+    private OAuth2User loadUserByOAuth2User(OAuth2UserRequest oAuth2UserRequest) {
+        System.out.println("================load");
+        OAuth2User OAuth2User = null;
+        return OAuth2User;
+    }
+
+
 
     /**
      * 将多种类型的Handler整合到同一个方法中，包含：
