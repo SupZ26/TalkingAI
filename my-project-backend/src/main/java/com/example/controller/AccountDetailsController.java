@@ -2,8 +2,10 @@ package com.example.controller;
 
 import com.example.entity.RestBean;
 import com.example.entity.vo.request.AddDepositVO;
+import com.example.entity.vo.request.UpdatePasswordVO;
 import com.example.entity.vo.request.UserDetailsInfoVO;
 import com.example.service.AccountDetailsService;
+import com.example.utils.Const;
 import com.example.validation.ValidString;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -35,12 +37,11 @@ public class AccountDetailsController {
 
     /**
      * 查找用户的所有信息
-     * @param username
      * @return 所有信息
      */
     @GetMapping("/findAllDetails")
-    public RestBean<UserDetailsInfoVO> findAllAboutUser(@RequestParam String username){
-        return RestBean.success(accountDetailsService.findAllAboutUser(username));
+    public RestBean<UserDetailsInfoVO> findAllAboutUser(@RequestAttribute(Const.ATTR_USER_ID) int id){
+        return RestBean.success(accountDetailsService.findAllAboutUser(id));
     }
 
     /**
@@ -58,10 +59,8 @@ public class AccountDetailsController {
     }
 
     @PutMapping("/updatePassword")
-    public RestBean<String> updatePassword(@RequestParam("username")@ValidString(minLength = 1,maxLength = 10) String username,
-                                           @RequestParam("oldPassword")@ValidString(minLength = 1,maxLength = 20) String oldPassword,
-                                           @RequestParam("newPassword")@ValidString(minLength = 1,maxLength = 20) String newPassword){
-        return accountDetailsService.updatePassword(username, oldPassword, newPassword) == 1
+    public RestBean<String> updatePassword(@RequestAttribute(Const.ATTR_USER_ID) int id, @RequestBody UpdatePasswordVO updatePasswordVO){
+        return accountDetailsService.updatePassword(id,updatePasswordVO) == 1
                 ? RestBean.success("密码修改成功")
                 : RestBean.failure(500,"账号修改失败");
     }

@@ -4,6 +4,7 @@ import com.example.entity.RestBean;
 import com.example.service.AccountDetailsService;
 import com.example.service.TokenService;
 import com.example.service.impl.TokenServiceImpl;
+import com.example.utils.Const;
 import jakarta.annotation.Resource;
 
 
@@ -23,28 +24,30 @@ public class OpenKeyController {
 
     /**
      * 官网查询Tokoen使用情况
-     * @param username
      * @return
      */
-    @PostMapping("/getTokenDetails")
-    public String getTokenDetails(@RequestParam String username) {
-        return tokenService.getToken(username);
+    @GetMapping("/getTokenDetails")
+    public String getTokenDetails(@RequestAttribute(Const.ATTR_USER_ID)int id) {
+        return tokenService.getToken(id);
     }
 
+    /**
+     * 为新用户绑定token
+     * @return
+     */
     @GetMapping("/bindToken")
-    public RestBean<Void> bindToken(@RequestParam String username){
-        tokenService.bindToken(username);
+    public RestBean<Void> bindToken(@RequestAttribute(Const.ATTR_USER_ID)int id){
+        tokenService.bindToken(id);
         return RestBean.success();
     }
 
     /**
      * 使用余额买key
-     * @param username
      * @return
      */
     @PutMapping("/buyKeyByDeposit/{username}")
-    public RestBean<String> buyKeyByDeposit(@PathVariable String username){
-        tokenService.buyKeyByDeposit(username);
+    public RestBean<String> buyKeyByDeposit(@RequestAttribute(Const.ATTR_USER_ID)int id){
+        tokenService.buyKeyByDeposit(id);
         return RestBean.success("购买成功");
     }
 

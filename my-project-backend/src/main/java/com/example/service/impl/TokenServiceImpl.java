@@ -41,7 +41,10 @@ public class TokenServiceImpl implements TokenService {
     /**
      * 从官网查询token的信息
      */
-    public String getToken(String username) {
+    public String getToken(int id) {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        String username = accountMapper.selectOne(queryWrapper).getUsername();
         Map<String,Object> paramMap = new HashMap<>();
         String api_key = getTokenIdByUsername(username);
         paramMap.put("api_key",api_key);
@@ -55,11 +58,14 @@ public class TokenServiceImpl implements TokenService {
 
     /**
      * 为新用户绑定tokenId
-     * @param username
      * @return
      */
     @Override
-    public void bindToken(String username) {
+    public void bindToken(int id) {
+        QueryWrapper<Account> accountQueryWrapper = new QueryWrapper<>();
+        accountQueryWrapper.eq("id",id);
+        String username = accountMapper.selectOne(accountQueryWrapper).getUsername();
+
         QueryWrapper<TokenBind> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username","").last("limit 1");
         TokenBind tokenEntity = tokenBindMapper.selectOne(queryWrapper);
@@ -87,11 +93,14 @@ public class TokenServiceImpl implements TokenService {
 
     /**
      * 使用余额买key
-     * @param username
      */
     @Override
     @Transactional
-    public void buyKeyByDeposit(String username)  {
+    public void buyKeyByDeposit(int id)  {
+        QueryWrapper<Account> accountQueryWrapper = new QueryWrapper<>();
+        accountQueryWrapper.eq("id",id);
+        String username = accountMapper.selectOne(accountQueryWrapper).getUsername();
+
         if(isBindWithToken(username))
             throw new RuntimeException("该用户已经绑定token，无法再次购买");
         UpdateWrapper<Account> updateWrapper  = new UpdateWrapper<>();
@@ -102,8 +111,8 @@ public class TokenServiceImpl implements TokenService {
         }catch (Exception e){
            log.info(e.getMessage());
         }
-        bindToken(username);
-        accountDetailsService.updateToken(username,Double.parseDouble(getToken(username)));
+        bindToken(id);
+        accountDetailsService.updateToken(username,Double.parseDouble(getToken(id)));
     }
 
     /**
@@ -113,10 +122,14 @@ public class TokenServiceImpl implements TokenService {
     @Override
     @Transactional
     public void buyKeyByAlipay(String username) {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        Integer id = accountMapper.selectOne(queryWrapper).getId();
+
         if(isBindWithToken(username))
             throw new RuntimeException("该用户已经绑定token，无法再次购买");
-        bindToken(username);
-        accountDetailsService.updateToken(username,Double.parseDouble(getToken(username)));
+        bindToken(id);
+        accountDetailsService.updateToken(username,Double.parseDouble(getToken(id)));
     }
 
     /**

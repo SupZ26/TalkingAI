@@ -6,11 +6,13 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.entity.dto.Account;
 import com.example.entity.dto.Chat;
 import com.example.entity.vo.request.AIRequestChatVO;
 import com.example.entity.vo.request.RequestChatVO;
 import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
+import com.example.mapper.AccountMapper;
 import com.example.mapper.ChatMapper;
 import com.example.service.ChatService;
 import com.example.service.TokenService;
@@ -43,6 +45,8 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     @Resource
     ChatMapper chatMapper;
+    @Resource
+    AccountMapper accountMapper;
 
     @Resource
     RestTemplate restTemplate;
@@ -229,11 +233,14 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     /**
      * 查询用户所有拥有的对话主题
-     * @param username
      * @return
      */
     @Override
-    public List<String> findAllTopic(String username) {
+    public List<String> findAllTopic(int id) {
+        QueryWrapper<Account> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("id",id);
+        String username = accountMapper.selectOne(queryWrapper1).getUsername();
+
         QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username",username);
         return chatMapper.selectList(queryWrapper).stream()
@@ -245,12 +252,14 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
 
     /**
      * 删除指定的topic
-     * @param username
      * @param topic
      * @return
      */
     @Override
-    public int deleteTopic(String username, String topic) {
+    public int deleteTopic(int id, String topic) {
+        QueryWrapper<Account> accountQueryWrapper = new QueryWrapper<>();
+        accountQueryWrapper.eq("id",id);
+        String username = accountMapper.selectOne(accountQueryWrapper).getUsername();
         QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username",username)
                 .eq("topic",topic);

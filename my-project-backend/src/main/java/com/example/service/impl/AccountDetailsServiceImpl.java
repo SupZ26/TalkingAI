@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
 import com.example.entity.vo.request.AddDepositVO;
+import com.example.entity.vo.request.UpdatePasswordVO;
 import com.example.entity.vo.request.UserDetailsInfoVO;
 import com.example.mapper.AccountMapper;
 import com.example.service.AccountDetailsService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.Date;
 import java.util.Optional;
@@ -55,16 +57,15 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
 
     /**
      * 根据姓名查找用户的全部信息
-     * @param username  用户姓名
      * @return  用户所有信息
      */
     @Override
-    public UserDetailsInfoVO findAllAboutUser(String username) {
+    public UserDetailsInfoVO findAllAboutUser(int id) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",username);
+        queryWrapper.eq("id",id);
         Account account = accountMapper.selectOne(queryWrapper);
         if(account == null){
-            throw new RuntimeException("用户姓名不存在");
+            throw new RuntimeException("用户不存在");
         }else {
             UserDetailsInfoVO userDetails = new UserDetailsInfoVO();
             userDetails = account.asViewObject(UserDetailsInfoVO.class);
@@ -134,19 +135,17 @@ public class AccountDetailsServiceImpl extends ServiceImpl<AccountMapper, Accoun
 
     /**
      * 修改密码
-     * @param oldPassword
-     * @param newPassword
      * @return
      */
     @Override
-    public int updatePassword(String username,String oldPassword, String newPassword) {
+    public int updatePassword(int id, UpdatePasswordVO updatePasswordVO) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",username);
-        if(!passwordEncoder.matches(oldPassword,accountMapper.selectOne(queryWrapper).getPassword()))
+        queryWrapper.eq("id",id);
+        if(!passwordEncoder.matches(updatePasswordVO.getOldPassword(), accountMapper.selectOne(queryWrapper).getPassword()))
             throw new RuntimeException("输入的原密码错误，请重新输入");
         UpdateWrapper<Account> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("username",username)
-                .set("password",passwordEncoder.encode(newPassword));
+        updateWrapper.eq("id",id)
+                .set("password",passwordEncoder.encode(updatePasswordVO.getNewPassword()));
         return accountMapper.update(null,updateWrapper);
 
     }

@@ -5,6 +5,7 @@ import com.example.entity.vo.request.RequestChatVO;
 import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
 import com.example.service.ChatService;
+import com.example.utils.Const;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -40,19 +41,24 @@ public class ChatController {
 
     /**
      * 查找所有的主题
-     * @param username
      * @return
      */
     @GetMapping("/findAllTopic")
-    public RestBean<List<String>> findAllTopic(@RequestParam String username){
-        if(chatService.findAllTopic(username).isEmpty())
+    public RestBean<List<String>> findAllTopic(@RequestAttribute(Const.ATTR_USER_ID)int id){
+        if(chatService.findAllTopic(id).isEmpty())
             return RestBean.failure(500,"找不到主题");
-        return RestBean.success(chatService.findAllTopic(username));
+        return RestBean.success(chatService.findAllTopic(id));
     }
 
+    /**
+     * 删除指定对话主题
+     * @param id
+     * @param topic
+     * @return
+     */
     @DeleteMapping("/deleteTopic")
-    public RestBean<Void> deleteTopic(@RequestParam String username,@RequestParam String topic){
-        if(chatService.deleteTopic(username, topic) != 0){
+    public RestBean<Void> deleteTopic(@RequestAttribute(Const.ATTR_USER_ID)int id,@RequestParam String topic){
+        if(chatService.deleteTopic(id, topic) != 0){
             return RestBean.success();
         }else {
             return RestBean.failure(500,"删除错误");

@@ -31,10 +31,10 @@ public interface ChatService extends IService<Chat> {
     int updateTopic(UpdateTopicVO updateTopicVO);
 
     //查询用户所有拥有的对话主题
-    List<String> findAllTopic(String username);
+    List<String> findAllTopic(int id);
 
     //删除指定的对话主题
-    int deleteTopic(String username,String topic);
+    int deleteTopic(int id,String topic);
 
     public void question(RequestChatVO requestChatVO,String question,SseEmitter sseEmitter);
 }

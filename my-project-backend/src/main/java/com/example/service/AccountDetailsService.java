@@ -3,6 +3,7 @@ package com.example.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.entity.dto.Account;
 import com.example.entity.vo.request.AddDepositVO;
+import com.example.entity.vo.request.UpdatePasswordVO;
 import com.example.entity.vo.request.UserDetailsInfoVO;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public interface AccountDetailsService extends IService<Account> {
     String addDeposit(AddDepositVO addDepositVO);
 
     //根据姓名查询用户身份的全部信息
-    UserDetailsInfoVO findAllAboutUser(String username);
+    UserDetailsInfoVO findAllAboutUser(int id);
 
     //更新token余额
     int updateToken(String username,double remaining);
@@ -28,7 +29,7 @@ public interface AccountDetailsService extends IService<Account> {
     int updateUsername(String oldUsername,String newUsername);
 
     //修改密码
-    int updatePassword(String username,String oldPassword,String newPassword);
+    int updatePassword(int id, UpdatePasswordVO updatePasswordVO);
 
 
 }
