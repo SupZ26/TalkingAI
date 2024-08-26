@@ -32,6 +32,6 @@ public class Account implements BaseData {
     double token;
     @TableField("openId")
     String openId;
-    @TableField("giteeId")
+    @TableField("githubId")
     Integer giteeId;
 }
