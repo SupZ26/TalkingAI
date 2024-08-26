@@ -6,6 +6,7 @@ import com.example.entity.vo.response.AuthorizeVO;
 import com.example.filter.JwtAuthenticationFilter;
 import com.example.filter.RequestLogFilter;
 import com.example.service.AccountService;
+import com.example.service.GithubAuthService;
 import com.example.utils.Const;
 import com.example.utils.JwtUtils;
 import jakarta.annotation.Resource;
@@ -20,13 +21,24 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,6 +63,15 @@ public class SecurityConfiguration {
     @Resource
     AccountService service;
 
+    @Resource
+    PasswordEncoder passwordEncoder;
+
+    @Resource
+    GithubAuthService githubAuthService;
+
+    @Resource
+    private OAuth2AuthorizedClientService authorizedClientService;
+
     /**
      * 针对于 SpringSecurity 6 的新版配置方法
      * @param http 配置器
@@ -61,6 +82,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf -> conf
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/api/auth/**", "/error").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/alipay/**").permitAll()
@@ -69,9 +91,12 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/chatAI/toChat").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
-                /*.oauth2Login(conf -> conf
-                        .loginProcessingUrl("/api/auth/gitee/callback")
-                )*/
+                .oauth2Login(conf -> conf
+                        .successHandler(this::handleOAuth2LoginSuccess)
+                        .failureHandler(this::handleOAuth2LoginFailure)
+                        .defaultSuccessUrl("http://127.0.0.1:5173/a",true)
+                        .permitAll()
+                )
                 .formLogin(conf -> conf
                         .loginProcessingUrl("/api/auth/login")
                         .failureHandler(this::handleProcess)
@@ -94,12 +119,61 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    private OAuth2User loadUserByOAuth2User(OAuth2UserRequest oAuth2UserRequest) {
-        System.out.println("================load");
-        OAuth2User OAuth2User = null;
-        return OAuth2User;
+    /**
+     * OAuth2登录失败处理
+     * @param request
+     * @param response
+     * @param exceptionOrAuthentication
+     * @throws IOException
+     */
+    private void handleOAuth2LoginFailure(HttpServletRequest request, HttpServletResponse response, Object exceptionOrAuthentication) throws IOException {
+        PrintWriter writer = response.getWriter();
+        if(exceptionOrAuthentication instanceof AccessDeniedException exception) {
+            writer.write(RestBean
+                    .forbidden(exception.getMessage()).asJsonString());
+        } else if(exceptionOrAuthentication instanceof Exception exception){
+            writer.write(RestBean
+                    .unauthorized(exception.getMessage()).asJsonString());
+        }else {
+            writer.write(RestBean.failure(500,"未知的OAuth2登录错误").asJsonString());
+        }
     }
 
+    /**
+     * OAuth2登陆成功处理
+     * @param request
+     * @param response
+     * @param authentication
+     * @throws IOException
+     */
+    private void handleOAuth2LoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
+        OAuth2User oauth2User = oauth2Token.getPrincipal();
+        String registrationId = oauth2Token.getAuthorizedClientRegistrationId();
+        OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(registrationId, oauth2Token.getName());
+        // 从 OAuth2User 中获取信息，处理并保存用户信息
+        log.info(String.valueOf(oauth2User));
+        String username = oauth2User.getAttribute("login");
+        Integer githubId = oauth2User.getAttribute("id");
+        if (authorizedClient != null && authorizedClient.getAccessToken() != null && username!=null) {
+            String accessToken = authorizedClient.getAccessToken().getTokenValue();
+            githubAuthService.githubLogin(githubId,username,accessToken);
+            Account account = service.findAccountByNameOrEmail(username);
+
+            String jwt = utils.createJwt(new User(username,passwordEncoder.encode("123456") , oauth2User.getAuthorities()), username, account.getId());
+
+            PrintWriter writer = response.getWriter();
+            if(jwt == null){
+                writer.write(RestBean.forbidden("登录验证频繁，请稍后再试").asJsonString());
+            }
+            // 构建返回对象
+            AuthorizeVO vo = account.asViewObject(AuthorizeVO.class, o -> o.setToken(jwt));
+            vo.setExpire(utils.expireTime());
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(RestBean.success(vo).asJsonString());
+        }
+
+    }
 
 
     /**
@@ -133,8 +207,11 @@ public class SecurityConfiguration {
                 AuthorizeVO vo = account.asViewObject(AuthorizeVO.class, o -> o.setToken(jwt));
                 vo.setExpire(utils.expireTime());
                 writer.write(RestBean.success(vo).asJsonString());
+
+
             }
         }
+
     }
 
     /**
