@@ -1,5 +1,5 @@
+<link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.css?spm=a313x.manage_type_myprojects.i1.9.3f1b3a81QC6xsA&file=font_4665451_zkpbelp7bfe.css">
 <template>
-
     <div style="text-align: center; margin: 0 80px">
         <div style="margin-top: 40px">
             <div style="font-size: 25px; font-weight: bold">账号登录</div>
@@ -58,9 +58,12 @@
                 >微信登录</el-button
             >
         </div>-->
-      <div>
-        <el-button style="width: 270px" @click=githubLogin() ,type="warning" >github登录
-        </el-button>
+      <div class="iconfont">
+        <!--
+        <el-button @click=githubLogin() ,type="warning" >github登录
+        </el-button>-->
+        <span class="icon-weixin"></span>
+        <span class="icon-github" @click=githubLogin()></span>
       </div>
     </div>
 
@@ -105,4 +108,34 @@ function githubLogin() {
   width: 350px;
   border-color:transparent;
 }
+@font-face {
+  font-family: "iconfont"; /* Project id 4665451 */
+  src: url('//at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.woff2?t=1724724754367') format('woff2'),
+  url('//at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.woff?t=1724724754367') format('woff'),
+  url('//at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.ttf?t=1724724754367') format('truetype');
+}
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 35px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-weixin{
+  position: absolute;
+  left: 120px;
+  color: darkgreen;
+}
+.icon-github{
+  position: absolute;
+  right: 120px;
+}
+.icon-weixin:before {
+  content: "\e6ea";
+}
+
+.icon-github:before {
+  content: "\e689";
+}
+
 </style>
