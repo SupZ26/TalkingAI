@@ -55,23 +55,14 @@
 <script>
 import axios from "axios";
 import { createPinia } from "pinia";
-import { persist } from "pinia-plugin-persistedstate";
 
 const pinia = createPinia();
-pinia.use(persist);
 
 export default {
     data() {
         return {
-            package_options: [
-                { value: 10, label: "10元", tokens: 1000 },
-                { value: 30, label: "30元", tokens: 3500 },
-                { value: 50, label: "50元", tokens: 6000 },
-                { value: 100, label: "100元", tokens: 13000 },
-                { value: 150, label: "150元", tokens: 18500 },
-                { value: 200, label: "200元", tokens: 114514 },
-            ],
-            selected_package: 10,
+            package_options: [{ value: 20, label: "20元", tokens: 500000 }],
+            selected_package: 20,
             paymentMethods: [
                 { value: "remain", label: "余额" },
                 { value: "alipay", label: "支付宝" },
