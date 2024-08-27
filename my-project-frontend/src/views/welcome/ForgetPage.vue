@@ -11,6 +11,7 @@
                 <div style="margin-top: 20px">
                     <div style="font-size: 25px; font-weight: bold">重置密码</div>
                 </div>
+
                 <div style="margin-top: 10px">
                     <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                         <el-form-item prop="email">
@@ -47,13 +48,16 @@
                 </div>
             </div>
         </transition>
-        <transition name="el-fade-in-linear" mode="out-in">
-            <div style="text-align: center; margin: 0 10px; height: 100%" v-if="active === 1">
-                <div style="margin-top: 30px">
-                    <div style="font-size: 25px; font-weight: bold">重置密码</div>
-                    <div style="font-size: 14px; color: grey">请填写您的新密码，务必牢记，防止丢失</div>
-                </div>
-                <div style="margin-top: 20px">
+
+
+
+      <transition name="el-fade-in-linear" mode="out-in">
+        <div style="text-align: center; margin: 0 80px; height: 100%" v-if="active === 0">
+          <div style="margin-top: 20px">
+            <div style="font-size: 25px; font-weight: bold">重置密码</div>
+          </div>
+
+                <div style="margin-top: 10px">
                     <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                         <el-form-item prop="password">
                             <el-input v-model="form.password" :maxlength="16" type="password" placeholder="新密码">
