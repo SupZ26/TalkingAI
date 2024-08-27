@@ -1,10 +1,9 @@
 <template>
-    <div style="text-align: center; margin: 0 20px">
-        <div style="margin-top: 100px">
+    <div style="text-align: center; margin: 0 80px">
+        <div style="margin-top: 40px">
             <div style="font-size: 25px; font-weight: bold">注册新用户</div>
-            <div style="font-size: 14px; color: grey">欢迎注册我们的学习平台，请在下方填写相关信息</div>
         </div>
-        <div style="margin-top: 50px">
+        <div style="margin-top: 30px">
             <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                 <el-form-item prop="username">
                     <el-input v-model="form.username" :maxlength="8" type="text" placeholder="用户名">
@@ -52,7 +51,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div style="margin-top: 80px">
+        <div style="margin-top: 40px">
             <el-button style="width: 270px" type="warning" @click="register" plain>立即注册</el-button>
         </div>
         <div style="margin-top: 20px">
