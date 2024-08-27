@@ -1,3 +1,5 @@
+//懒得搞了，有缘再见
+/*
 package com.example.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -47,3 +49,4 @@ public class GiteeOAuth2LoginConfig {
                 .build();
     }
 }
+*/

@@ -119,15 +119,6 @@ public class AuthorizeController {
     }
 
 
-    /**
-     * 处理github登录回调
-     * @param code
-     * @return
-     */
-    @GetMapping("/github/callback")
-    public void githubCallback(@RequestParam("code") String code){
-        githubAuthService.githubCallback(code);
-    }
 
 
     @GetMapping("/gitee/callback")

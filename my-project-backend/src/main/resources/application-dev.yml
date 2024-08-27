@@ -29,6 +29,13 @@ spring:
     oauth2:
       client:
         registration:
+          github:
+            client-id: Ov23liUpnU7nof5IQO9G
+            client-secret: 5c4bed87b958677d922bdad3a82f90f0da4c3246
+            scope: read:user, user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/github"
+            authorization-grant-type: authorization_code
+            client-name: GitHub
           gitee:
             client-id: 0bb7105d92911c89607f9d52b3abe6d6b20a6f0564cd838270aaa8db11b141d2
             client-secret: 9e1638724234086e1cb7b78935512cccd0b2bc1b97005dce4d945286b1097694
@@ -36,6 +43,10 @@ spring:
             redirect-uri: 'http://localhost:8080/api/auth/gitee/callback'
             client-name: Gitee
         provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
           gitee:
             authorization-uri: https://gitee.com/oauth/authorize
             token-uri: https://gitee.com/oauth/token
@@ -76,7 +87,6 @@ WeiXin:
   login:
     access_token_url: https://api.weixin.qq.com/sns/oauth2/access_token
     get_user_info_url: https://api.weixin.qq.com/sns/userinfo
-
 
 
 

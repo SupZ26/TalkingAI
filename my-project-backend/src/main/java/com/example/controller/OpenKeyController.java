@@ -45,7 +45,7 @@ public class OpenKeyController {
      * 使用余额买key
      * @return
      */
-    @PutMapping("/buyKeyByDeposit/{username}")
+    @PutMapping("/buyKeyByDeposit")
     public RestBean<String> buyKeyByDeposit(@RequestAttribute(Const.ATTR_USER_ID)int id){
         tokenService.buyKeyByDeposit(id);
         return RestBean.success("购买成功");
