@@ -98,7 +98,6 @@ export default {
             paymentMethods: [{ value: "alipay", label: "支付宝" }],
             selectedPaymentMethod: "alipay",
             paymentFormHtml: "",
-            totalAmount: 0,
         };
     },
     computed: {
@@ -115,6 +114,10 @@ export default {
             } else {
                 this.customAmount = 10;
             }
+            console.log(this.selectedAmount);
+            console.log(this.customAmount);
+            console.log(this.totalAmount);
+            console.log(this.selectedPaymentMethod);
         },
 
         // 监听customAmount的变化，当输入自定义金额时清空预设金额
