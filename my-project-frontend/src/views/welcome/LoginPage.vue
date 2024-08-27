@@ -1,13 +1,13 @@
 <template>
-    <div style="text-align: center; margin: 0 20px">
-        <div style="margin-top: 150px">
-            <div style="font-size: 25px; font-weight: bold">登录</div>
-            <div style="font-size: 14px; color: grey">在进入系统之前请先输入用户名和密码进行登录</div>
+
+    <div style="text-align: center; margin: 0 80px">
+        <div style="margin-top: 40px">
+            <div style="font-size: 25px; font-weight: bold">账号登录</div>
         </div>
-        <div style="margin-top: 50px">
+        <div class="kuang" style="margin-top: 30px" >
             <el-form :model="form" :rules="rules" ref="formRef">
                 <el-form-item prop="username">
-                    <el-input v-model="form.username" maxlength="10" type="text" placeholder="用户名/邮箱">
+                    <el-input style="margin-top: 20px" v-model="form.username" maxlength="10" type="text" placeholder="用户名/邮箱">
                         <template #prefix>
                             <el-icon>
                                 <User />
@@ -42,25 +42,32 @@
                 </el-row>
             </el-form>
         </div>
-        <div style="margin-top: 40px">
+        <div style="margin-top: 20px">
             <el-button @click="userLogin()" style="width: 270px" type="success" plain>立即登录</el-button>
         </div>
         <el-divider>
-            <span style="color: grey; font-size: 13px">没有账号</span>
+            <span  style="color: red; font-size: 13px; " >没有账号</span>
         </el-divider>
         <div>
             <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
         </div>
         <!--TODO 这里的按钮进作为临时测试微信登录的按钮，修改为正式网页时需进行替换-->
+      <!--
         <div>
             <el-button style="width: 270px" @click="router.push('/WeChatLogin')" type="warning" plain
                 >微信登录</el-button
             >
-        </div>
+        </div>-->
+      <div>
+        <el-button style="width: 270px" @click=githubLogin() ,type="warning" >github登录
+        </el-button>
+      </div>
     </div>
+
 </template>
 
 <script setup>
+
 import { User, Lock } from "@element-plus/icons-vue";
 import router from "@/router";
 import { reactive, ref } from "vue";
@@ -86,6 +93,16 @@ function userLogin() {
         }
     });
 }
+function githubLogin() {
+  window.location.href = "http://localhost:8080/oauth2/authorization/github";
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+.kuang{
+  border-style:solid ;
+  height: 180px;
+  width: 350px;
+  border-color:transparent;
+}
+</style>

@@ -1,18 +1,17 @@
 <template>
     <div>
-        <div style="margin: 30px 20px">
+        <div style="margin: 40px 1px">
             <el-steps :active="active" finish-status="success" align-center>
                 <el-step title="验证电子邮件" />
                 <el-step title="重新设定密码" />
             </el-steps>
         </div>
         <transition name="el-fade-in-linear" mode="out-in">
-            <div style="text-align: center; margin: 0 20px; height: 100%" v-if="active === 0">
-                <div style="margin-top: 80px">
+            <div style="text-align: center; margin: 0 80px; height: 100%" v-if="active === 0">
+                <div style="margin-top: 20px">
                     <div style="font-size: 25px; font-weight: bold">重置密码</div>
-                    <div style="font-size: 14px; color: grey">请输入需要重置密码的电子邮件地址</div>
                 </div>
-                <div style="margin-top: 50px">
+                <div style="margin-top: 10px">
                     <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                         <el-form-item prop="email">
                             <el-input v-model="form.email" type="email" placeholder="电子邮件地址">
@@ -43,18 +42,18 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div style="margin-top: 70px">
+                <div style="margin-top: 20px">
                     <el-button @click="confirmReset()" style="width: 270px" type="danger" plain>开始重置密码</el-button>
                 </div>
             </div>
         </transition>
         <transition name="el-fade-in-linear" mode="out-in">
-            <div style="text-align: center; margin: 0 20px; height: 100%" v-if="active === 1">
-                <div style="margin-top: 80px">
+            <div style="text-align: center; margin: 0 10px; height: 100%" v-if="active === 1">
+                <div style="margin-top: 30px">
                     <div style="font-size: 25px; font-weight: bold">重置密码</div>
                     <div style="font-size: 14px; color: grey">请填写您的新密码，务必牢记，防止丢失</div>
                 </div>
-                <div style="margin-top: 50px">
+                <div style="margin-top: 20px">
                     <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                         <el-form-item prop="password">
                             <el-input v-model="form.password" :maxlength="16" type="password" placeholder="新密码">
@@ -77,7 +76,7 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div style="margin-top: 70px">
+                <div style="margin-top: 20px">
                     <el-button @click="doReset()" style="width: 270px" type="danger" plain>立即重置密码</el-button>
                 </div>
             </div>
