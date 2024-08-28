@@ -24,7 +24,6 @@ const router = createRouter({
                     name: "welcome-forget",
                     component: () => import("@/views/welcome/ForgetPage.vue"),
                 },
-                
             ],
         },
         {
@@ -53,10 +52,15 @@ const router = createRouter({
             component: () => import("@/views/package_list.vue"),
         },
         {
-            path:"/home",
-            name:"home",
-            component:()=>import("@/views/HomeView.vue")
-        }
+            path: "/home",
+            name: "home",
+            component: () => import("@/views/HomeView.vue"),
+        },
+        {
+            path: "/user",
+            name: "user",
+            component: () => import("@/views/user.vue"),
+        },
     ],
 });
 
