@@ -24,6 +24,7 @@ const router = createRouter({
                     name: "welcome-forget",
                     component: () => import("@/views/welcome/ForgetPage.vue"),
                 },
+                
             ],
         },
         {
@@ -51,17 +52,23 @@ const router = createRouter({
             name: "packages",
             component: () => import("@/views/package_list.vue"),
         },
+        {
+            path:"/home",
+            name:"home",
+            component:()=>import("@/views/HomeView.vue")
+        }
     ],
 });
 
 router.beforeEach((to, from, next) => {
-    const isUnauthorized = unauthorized();
-    // 除了登录页面之外的所有页面在没登陆时都跳转到登录页面
-    if (!to.name.startsWith("welcome") && isUnauthorized) {
-        next("/");
-    } else {
-        next();
-    }
+    // const isUnauthorized = unauthorized();
+    // // 除了登录页面之外的所有页面在没登陆时都跳转到登录页面
+    // if (!to.name.startsWith("welcome") && isUnauthorized) {
+    //     next("/");
+    // } else {
+    //     next();
+    // }
+    next();
 });
 
 export default router;

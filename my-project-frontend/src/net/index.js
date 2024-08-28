@@ -109,4 +109,34 @@ function unauthorized() {
     return !takeAccessToken();
 }
 
+//主题相关接口
+export const createSubject= async(title)=>{
+    return http.post('',{ title });
+}
+
+export const getSubject=()=>axios.get('');
+
+export const deleteSubject=id=>axios.delete('',{params:{id}});
+
+export const changeSubjectTitle=(id,title)=>{
+
+}
+
+//问题相关
+export const getQuestions = (subjectId) => {
+    return axios.get('', {})
+}
+
+//用户信息相关
+export const getUserInf=async()=>{
+    let{data}=await axios.get('/api/accounts/findAllDetails').data;
+    saveUserToPinia(data);
+}
+
+export const saveUserToPinia = user => {
+    const store = useUserStore();
+    // user.token = user.token.token;
+    store.login(user);
+}
+
 export { post, get, login, logout, unauthorized };
