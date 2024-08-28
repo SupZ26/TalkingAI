@@ -7,12 +7,8 @@
                     <h3>套餐：</h3>
 
                     <div class="options">
-                        <label
-                            v-for="option in package_options"
-                            :key="option.value"
-                            class="option"
-                            :class="{ selected: selected_package === option.value }"
-                        >
+                        <label v-for="option in package_options" :key="option.value" class="option"
+                            :class="{ selected: selected_package === option.value }">
                             <input type="radio" :value="option.value" v-model="selected_package" />
                             <span>{{ option.label }}</span>
                         </label>
@@ -22,12 +18,8 @@
                 <div class="payment-method">
                     <h3>支付方式：</h3>
                     <div class="options">
-                        <label
-                            v-for="method in paymentMethods"
-                            :key="method.value"
-                            class="option"
-                            :class="{ selected: selectedPaymentMethod === method.value }"
-                        >
+                        <label v-for="method in paymentMethods" :key="method.value" class="option"
+                            :class="{ selected: selectedPaymentMethod === method.value }">
                             <input type="radio" :value="method.value" v-model="selectedPaymentMethod" />
                             <span>{{ method.label }}</span>
                         </label>
@@ -36,8 +28,8 @@
 
                 <div class="summary">
                     <h4 style="display: inline; text-align: center; color: #555">
-                        您将使用{{ selected_paymethod }}购买<span class="total-amount">{{ selected_package }}元</span
-                        ><span>套餐，获得</span><span class="total-amount">{{ selected_tokens }} tokens</span>
+                        您将使用{{ selected_paymethod }}购买<span class="total-amount">{{ selected_package
+                            }}元</span><span>套餐，获得</span><span class="total-amount">{{ selected_tokens }} tokens</span>
                     </h4>
                 </div>
 
@@ -54,11 +46,16 @@
 
 <script>
 import axios from "axios";
-import { createPinia } from "pinia";
-
-const pinia = createPinia();
+import { useUserStore } from "../stores/user";
 
 export default {
+    setup() {
+        const userStore = useUserStore();
+
+        return {
+            userStore
+        };
+    },
     data() {
         return {
             package_options: [{ value: 20, label: "20元", tokens: 500000 }],
@@ -81,6 +78,8 @@ export default {
     },
     methods: {
         ali_pay(order) {
+            axios.post("/api/token/buyKeyByDeposit");
+
             axios
                 .post("/alipay/pay", order)
                 .then((res) => {
@@ -89,15 +88,11 @@ export default {
 
                     setTimeout(() => {
                         document.forms["punchout_form"].submit();
-                    }, 1000);
+                    }, 3000);
                 })
                 .catch((error) => {
                     console.error("支付失败", error);
                 });
-        },
-
-        remain_pay(order) {
-            axios.post("", order);
         },
 
         pay() {
@@ -109,12 +104,8 @@ export default {
 
             // check remain
             if (this.selectedPaymentMethod === "remain") {
-                // 从持久化存储中拿到有余额还有多少
-                // ...
-                // 判断余额再往数据库和本地存储中扣除
-                // ...
-
-                this.remain_pay(order);
+                if (this.userStore.deposit >= 20)
+                    axios.post("/api/token/buyKeyByDeposit");
             } else {
                 this.ali_pay(order);
             }

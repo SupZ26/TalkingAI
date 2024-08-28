@@ -3,55 +3,31 @@
         <div class="charge-content">
             <h1 style="margin-top: 15vh">充值列表</h1>
             <div style="margin-left: 20%; margin-right: 20%">
-                <!--
-                <div>
-                    <h3 style="display: inline; padding-top: 30px; padding-bottom: 30px">
-                        充值说明：<span style="color: #555">1元大概xxxTokens</span>
-                    </h3>
-                </div>
-                -->
-
                 <div class="amount-selector">
                     <h3>充值金额：</h3>
 
                     <div class="options">
-                        <label
-                            v-for="option in amountOptions"
-                            :key="option.value"
-                            class="option"
-                            :class="{ selected: selectedAmount === option.value }"
-                        >
+                        <label v-for="option in amountOptions" :key="option.value" class="option"
+                            :class="{ selected: selectedAmount === option.value }">
                             <input type="radio" :value="option.value" v-model="selectedAmount" />
                             <span>{{ option.label }}</span>
                         </label>
-                        <label
-                            class="option custom-amount"
-                            :class="{ active: customAmount !== null, selected: selectedAmount === 'custom' }"
-                        >
+                        <!-- <label class="option custom-amount"
+                            :class="{ active: customAmount !== null, selected: selectedAmount === 'custom' }">
                             <input type="radio" value="custom" v-model="selectedAmount" />
                             <span>自定义金额</span>
-                            <input
-                                type="text"
-                                v-if="selectedAmount === 'custom'"
-                                v-model.number="customAmount"
-                                @input="validateCustomAmount"
-                                min="10"
-                                placeholder="请输入金额"
-                                :disabled="selectedAmount !== 'custom'"
-                            />
-                        </label>
+                            <input type="text" v-if="selectedAmount === 'custom'" v-model.number="customAmount"
+                                @input="validateCustomAmount" min="10" placeholder="请输入金额"
+                                :disabled="selectedAmount !== 'custom'" />
+                        </label> -->
                     </div>
                 </div>
 
                 <div class="payment-method">
                     <h3>支付方式：</h3>
                     <div class="options">
-                        <label
-                            v-for="method in paymentMethods"
-                            :key="method.value"
-                            class="option"
-                            :class="{ selected: selectedPaymentMethod === method.value }"
-                        >
+                        <label v-for="method in paymentMethods" :key="method.value" class="option"
+                            :class="{ selected: selectedPaymentMethod === method.value }">
                             <input type="radio" :value="method.value" v-model="selectedPaymentMethod" />
                             <span>{{ method.label }}</span>
                         </label>
@@ -61,7 +37,7 @@
                 <div class="summary">
                     <h3 style="display: inline">
                         您将支付:
-                        <span class="total-amount">{{ totalAmount }} 元</span>
+                        <span class="total-amount">{{ 2 * totalAmount }} 元</span>
                     </h3>
                 </div>
 
@@ -70,7 +46,7 @@
                 </div>
                 <p style="text-align: center">目前仅支持支付宝付款</p>
                 <!--拿数据-->
-                <p style="text-align: center">当前余额：</p>
+                <p style="text-align: center">当前余额：{{ this.userStore.deposit }}</p>
             </div>
         </div>
         <div class="payment-form" v-if="paymentFormHtml">
@@ -81,20 +57,29 @@
 
 <script>
 import axios from "axios";
+import { ElMessage } from "element-plus";
+import { useUserStore } from '@/stores/user';
 
 export default {
+    setup() {
+        const userStore = useUserStore();
+
+        return {
+            userStore
+        };
+    },
     data() {
         return {
             amountOptions: [
-                { value: 10, label: "10元" },
-                { value: 30, label: "30元" },
-                { value: 50, label: "50元" },
-                { value: 100, label: "100元" },
-                { value: 150, label: "150元" },
-                { value: 200, label: "200元" },
+                { value: 5, label: "10元" },
+                { value: 15, label: "30元" },
+                { value: 25, label: "50元" },
+                { value: 50, label: "100元" },
+                { value: 75, label: "150元" },
+                { value: 100, label: "200元" },
             ],
             customAmount: null,
-            selectedAmount: 10,
+            selectedAmount: 5,
             paymentMethods: [{ value: "alipay", label: "支付宝" }],
             selectedPaymentMethod: "alipay",
             paymentFormHtml: "",
@@ -132,26 +117,43 @@ export default {
         },
     },
     methods: {
+        addDeposit() {
+            const vo = {
+                username: this.userStore.username,
+                deposit: (2 * this.totalAmount).toString(),
+            };
+            axios
+                .post("api/accounts/addDeposit", vo)
+                .then(() => {
+                })
+                .catch(() => {
+                    ElMessage.warning("充值失败，请联系管理员");
+                }, 5000);
+        },
         pay() {
             const order = {
-                price: this.totalAmount,
-                subject: `充值${this.totalAmount}元`,
-                body: `通过${this.selectedPaymentMethod}充值${this.totalAmount}元`,
+                price: 2 * this.totalAmount,
+                subject: `充值${2 * this.totalAmount}元`,
+                body: `通过${this.selectedPaymentMethod}充值${2 * this.totalAmount}元`,
             };
 
-            axios
-                .post("/alipay/pay", order)
-                .then((res) => {
-                    console.log("支付成功", res.data);
-                    this.paymentFormHtml = res.data.data;
+            this.addDeposit();
+            this.userStore.deposit =
 
-                    setTimeout(() => {
-                        document.forms["punchout_form"].submit();
-                    }, 1000);
-                })
-                .catch((error) => {
-                    console.error("支付失败", error);
-                });
+
+                axios
+                    .post("/alipay/pay", order)
+                    .then((res) => {
+                        console.log("支付成功", res.data);
+                        this.paymentFormHtml = res.data.data;
+
+                        setTimeout(() => {
+                            document.forms["punchout_form"].submit();
+                        }, 3000);
+                    })
+                    .catch((error) => {
+                        console.error("支付失败", error);
+                    });
         },
 
         validateCustomAmount(event) {
