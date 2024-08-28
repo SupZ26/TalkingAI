@@ -56,9 +56,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const isUnauthorized = unauthorized();
-    if (to.name.startsWith("welcome") && !isUnauthorized) {
-        next("/index");
-    } else if (to.fullPath.startsWith("/index") && isUnauthorized) {
+    // 除了登录页面之外的所有页面在没登陆时都跳转到登录页面
+    if (!to.name.startsWith("welcome") && isUnauthorized) {
         next("/");
     } else {
         next();
