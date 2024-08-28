@@ -14,9 +14,9 @@ spring:
     password: guest
     virtual-host: /
   datasource:
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://localhost:3306/chat_ai
     username: root
-    password: 123159147lz
+    password: 114514
     driver-class-name: com.mysql.cj.jdbc.Driver
   security:
     jwt:
@@ -75,7 +75,7 @@ alipay:
   notifyUrl:  https://supz.mynatapp.cc/alipay/notify
   gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
   #回调地址（支付完返回的地址）
-  returnUrl: http://127.0.0.1:5173/a
+  returnUrl: http://127.0.0.1:5173/charge
 #OpenKey
 OpenKey:
   web_server: https://billing.openkey.cloud/api/token
