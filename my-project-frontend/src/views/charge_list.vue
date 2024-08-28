@@ -127,7 +127,6 @@ export default {
                 .then(() => {
                 })
                 .catch(() => {
-                    ElMessage.warning("充值失败，请联系管理员");
                 }, 5000);
         },
         pay() {

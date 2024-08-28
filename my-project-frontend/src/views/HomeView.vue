@@ -21,8 +21,16 @@
                     </div>
                 </div>
             </div>
-            <div class="user" @click="router.push({ name: 'user' })">
-                <div class="usercenter">用户中心</div>
+            <div class="user">
+                <div class="usercenter" @click="router.push({ name: 'charge' })">账户余额</div>
+
+            </div>
+            <div class="user">
+                <div class="usercenter" @click="router.push({ name: 'packages' })">关于套餐</div>
+
+            </div>
+            <div class="user">
+                <div class="usercenter" @click="router.push({ name: 'user' })">用户中心</div>
             </div>
         </div>
         <div class="main">
