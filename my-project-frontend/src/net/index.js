@@ -111,20 +111,31 @@ function unauthorized() {
 
 //主题相关接口
 export const createSubject= async(title)=>{
-    return http.post('',{ title });
+    return axios.post('',{ title });
 }
 
-export const getSubject=()=>axios.get('');
+export const getSubject=()=>axios.get('/api/chatAI/findAllTopic');
 
-export const deleteSubject=id=>axios.delete('',{params:{id}});
+export const deleteSubject=topic=>axios.delete('/api/chatAI/deleteTopic',{params:{topic}});
 
-export const changeSubjectTitle=(id,title)=>{
-
+export const changeSubjectTitle=async(id,oldtitle,newtitle)=>{
+    await axios.post(
+        '/api/chatAI/updateTopic',{
+            id:id,
+            oldTopic:oldtitle,
+            newTopic:newTitle
+        }
+    )
 }
 
 //问题相关
-export const getQuestions = (subjectId) => {
-    return axios.get('', {})
+export const getQuestions = (uname,topicname) => {
+    return axios.get('/api/chatAI/getChatContents', {
+        params:{
+            username:uname,
+            topic:topicname
+        }
+    })
 }
 
 //用户信息相关

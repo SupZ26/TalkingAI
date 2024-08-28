@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.entity.RestBean;
+import com.example.entity.dto.Chat;
 import com.example.entity.vo.request.RequestChatVO;
 import com.example.entity.vo.request.UpdateTopicVO;
 import com.example.entity.vo.response.AIResponseChatVO;
@@ -63,6 +64,11 @@ public class ChatController {
         }else {
             return RestBean.failure(500,"删除错误");
         }
+    }
+
+    @GetMapping("/getChatContents")
+    public RestBean<List<Chat>> getChatContents(@RequestParam("username") String username, @RequestParam("topic") String topic){
+        return RestBean.success(chatService.getChatContents(username,topic));
     }
 
 

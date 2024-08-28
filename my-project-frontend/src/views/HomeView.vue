@@ -2,17 +2,18 @@
     <div class="home">
         <div class="menu">
             <div class="subject">
+                <!-- 添加话题接口 -->
                 <div class="add-talk" @click="addSubject">
                     <div>添加新的话题</div>
                 </div>
                 <!-- 话题列表 -->
                 <div class="subject-list">
-                    <div class="list" :class="{ active: activeSubjectId == subject.id }" @click="changeSubject(index)"
-                        v-for="(subject, index) in subjectList" :key="subject.id">
+                    <div class="list" :class="{ active: activeSubjectIndex == index }" @click="changeSubject(index,subject)"
+                        v-for="(subject, index) in subjectList">
                         <div class="left">
                             <lay-icon type="layui-icon-file-b" color="white"></lay-icon>
                         </div>
-                        <div class="center">{{ subject.title }}</div>
+                        <div class="center">{{ subject }}</div>
                         <div class="right">
                             <lay-icon type="layui-icon-edit" color="white" @click="alterSubject(index)"></lay-icon>
                             <lay-icon type="layui-icon-delete" color="white" @click="removeSubject(index)"></lay-icon>
@@ -26,19 +27,19 @@
         </div>
         <div class="main">
             <div class="answers">
-                <template v-if="activeSubjectId">
-                    <div class="answer-item" v-for="question in questionList" :key="question.id">
+                <template v-if="activeSubjectIndex!=-1">
+                    <div class="answer-item" v-for="question in questionList" :key="question.dialog_id">
                         <div class="question-name">
                             <div class="left">
                                 <lay-avatar class='avatar'> A </lay-avatar>
                             </div>
-                            <div class="right">{{ question.title }}</div>
+                            <div class="right">{{ question.question }}</div>
                         </div>
                         <div class="answer">
                             <div class="left">
                                 <img src="@/assets/logo.png" alt="">
                             </div>
-                            <div class="right" @click="answerClickHandler" v-html="formatMd(question.answer)">
+                            <div class="right" @click="answerClickHandler" v-html="formatMd(question.response)">
 
                             </div>
                         </div>
@@ -144,7 +145,7 @@
                     <lay-input @keydown.enter="sendQuestion" v-model="question" placeholder="请输入问题"
                         class="add-question-input" size="lg">
                         <template #append>
-                            <lay-icon type="layui-icon-release" class="add-question-icon"></lay-icon>
+                            <lay-icon @click="sendQuestion" type="layui-icon-release" class="add-question-icon"></lay-icon>
                         </template>
                     </lay-input>
                 </div>
@@ -191,7 +192,7 @@ const answerClickHandler = async ($event) => {
 }
 
 //记录当前活跃的主题编号
-const activeSubjectId = ref(0);
+const activeSubjectIndex = ref(-1);
 //记录所有的话题数据
 const subjectList = reactive([{ title: 'nihao', id: 1 }, { title: '世界', id: 2 }]);
 const questionList = reactive([]);
@@ -214,50 +215,55 @@ const addSubject = () => {
 
 //删除话题
 const removeSubject = async (index) => {
-    await deleteSubject(subjectList[index].id);
+    await deleteSubject(subjectList[index]);
     subjectList.splice(index, 1);
 }
 
 //修改话题名称
 const alterSubject = async (index) => {
+    const old=subjectList[index];
     layer.prompt({
         title: "输入话题名称",
-        value: "新话题",
+        value: "",
         maxLength: 32,
         async yes(layero, title) {
-            let { data } = await changeSubjectTitle(subjectList[index].id, title);
-            console.log(data);
-            //更新列表
-            subjectList.unshift(data);
+            await changeSubjectTitle(store.id,old,title);
             layer.close(layero);
         }
     })
 }
 
 //选中话题
-const changeSubject = async (index) => {
+const changeSubject = async (index,subject) => {
     //记录当前话题编号
-    activeSubjectId.value = subjectList[index].id;
-    let { data } = await getQuestions(activeSubjectId.value);
+    activeSubjectIndex.value=index;
+    let { data } = await getQuestions(store.username,subject);
     //清除QuestionList中的数据
     questionList.length = 0;
     data.array.forEach(element => {
         questionList.push(element);
     });
-    console.log(index)
+    console.log(data)
 }
 
 //问问题
 const sendQuestion = () => {
-    const url = `http://127.0.0.1:9502/api/question/create?question=${question.value}
-    &modelId=1&subjectId=${activeSubjectId.value}`;
-    let es = new EventSource(url);
+    const url = 'http://127.0.0.1:8080/api/chatAI/toChat';
+    let es = new EventSource(url,{
+        username:store.username,
+        topic:subjectList[activeSubjectIndex.value],
+        model:'gpt-3.5-turbo',
+        message:{
+            role:store.role,
+            content:question.value
+        }
+    });
     //组装回复的问题
     questionList.push({
-        userId: useUserStore.id,
-        question: question.value,
-        subjectId: activeSubjectId.value,
-        answer: ''
+        username: store.username,
+        topic: subjectList[activeSubjectIndex.value],
+        model: 'gpt-3.5-turbo',
+        response: ''
     });
     es.onopen = function () {
         //打卡链接
@@ -266,11 +272,12 @@ const sendQuestion = () => {
     es.onmessage = function (event) {
         //接受消息
         //status是状态码，content是内容
+        console.log(event);
         const message = JSON.parse(event.data);
         switch (message.status) {
             case 1:
                 //正常接收数据
-                questionList[questionList.length - 1].answer += message.content;
+                questionList[questionList.length - 1].response += message.content;
                 break;
             case 2:
             //更新token
@@ -292,9 +299,9 @@ const inputChat = str => {
 }
 
 onMounted(async () => {
-    //获得列表
-    // let { data } = await getSubject();
-    // data.forEach(item => subjectList.push(item));
+    // 获得列表
+    let { data } = await getSubject();
+    data.forEach(item => subjectList.push(item));
 })
 </script>
 
