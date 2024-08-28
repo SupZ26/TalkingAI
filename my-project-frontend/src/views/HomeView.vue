@@ -1,4 +1,3 @@
-
 <template>
     <div class="home">
         <div class="menu">
@@ -21,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <div class="user" @click="router.push({name:'login'})">
+            <div class="user" @click="router.push({ name: 'login' })">
                 <div class="usercenter">用户中心</div>
             </div>
         </div>
@@ -47,92 +46,96 @@
                 </template>
                 <!-- 默认首页 -->
                 <template v-else>
-                    <div class="headercenter text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
-                      <h1
-                        class="chatailogo text-4xl font-semibold text-center mt-6 sm:mt-[20vh] ml-auto mr-auto mb-10 sm:mb-16 flex gap-2 items-center justify-center">
-                        ChatAi</h1>
-                      <div class=" md:flex items-start text-center gap-3.5">
-                        <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
-                          <h2 class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
-                            <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
-                              stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <circle cx="12" cy="12" r="5"></circle>
-                              <line x1="12" y1="1" x2="12" y2="3"></line>
-                              <line x1="12" y1="21" x2="12" y2="23"></line>
-                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                              <line x1="1" y1="12" x2="3" y2="12"></line>
-                              <line x1="21" y1="12" x2="23" y2="12"></line>
-                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                            </svg>
-                            例子
-                          </h2>
-                          <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
-                            <button @click="inputChat('java编程语言是什么？')"
-                              class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
-                              "java编程语言是什么？" →
-                            </button>
-                            <button @click="inputChat('如何编写一个二分查找？')"
-                              class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
-                              "如何编写一个二分查找？"
-                              →
-                            </button>
-                            <button @click="inputChat('把大象放进冰箱需要几步？')"
-                              class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
-                              "把大象放进冰箱需要几步？" →
-                            </button>
-                          </ul>
+                    <div
+                        class="headercenter text-gray-800 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100">
+                        <h1
+                            class="chatailogo text-4xl font-semibold text-center mt-6 sm:mt-[20vh] ml-auto mr-auto mb-10 sm:mb-16 flex gap-2 items-center justify-center">
+                            ChatAi</h1>
+                        <div class=" md:flex items-start text-center gap-3.5">
+                            <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+                                <h2
+                                    class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+                                    <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
+                                        stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em"
+                                        width="1em" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="5"></circle>
+                                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                    </svg>
+                                    例子
+                                </h2>
+                                <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+                                    <button @click="inputChat('java编程语言是什么？')"
+                                        class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
+                                        "java编程语言是什么？" →
+                                    </button>
+                                    <button @click="inputChat('如何编写一个二分查找？')"
+                                        class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
+                                        "如何编写一个二分查找？"
+                                        →
+                                    </button>
+                                    <button @click="inputChat('把大象放进冰箱需要几步？')"
+                                        class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-900">
+                                        "把大象放进冰箱需要几步？" →
+                                    </button>
+                                </ul>
+                            </div>
+                            <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+                                <h2
+                                    class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z">
+                                        </path>
+                                    </svg>
+                                    能力
+                                </h2>
+                                <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        极大提升你的工作效率
+                                    </li>
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        你的日常聊天伙伴
+                                    </li>
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        给你代码快乐
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+                                <h2
+                                    class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+                                    <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
+                                        stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em"
+                                        width="1em" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                        </path>
+                                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                    注意
+                                </h2>
+                                <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        ai回复不代表本站观点
+                                    </li>
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        回复可能偏离实际
+                                    </li>
+                                    <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
+                                        不要诱导ai
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
-                          <h2 class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                              stroke="currentColor" aria-hidden="true" class="h-6 w-6">
-                              <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z">
-                              </path>
-                            </svg>
-                            能力
-                          </h2>
-                          <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              极大提升你的工作效率
-                            </li>
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              你的日常聊天伙伴
-                            </li>
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              给你代码快乐
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
-                          <h2 class="chatailogo flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
-                            <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
-                              stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                              </path>
-                              <line x1="12" y1="9" x2="12" y2="13"></line>
-                              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                            注意
-                          </h2>
-                          <ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              ai回复不代表本站观点
-                            </li>
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              回复可能偏离实际
-                            </li>
-                            <li class="w-full bg-gray-50 dark:bg-white/5 p-3 rounded-md">
-                              不要诱导ai
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
                     </div>
                 </template>
             </div>
@@ -154,7 +157,7 @@ import { useUserStore } from '@/stores/user';
 import { layer } from '@layui/layui-vue';
 import { ref, reactive, onMounted } from 'vue';
 import '@/assets/index.css';
-import { createSubject, getSubject, deleteSubject,changeSubjectTitle } from '@/net/index.js';
+import { createSubject, getSubject, deleteSubject, changeSubjectTitle } from '@/net/index.js';
 import { getQuestions } from '@/net/index';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
@@ -222,7 +225,7 @@ const alterSubject = async (index) => {
         value: "新话题",
         maxLength: 32,
         async yes(layero, title) {
-            let { data } = await changeSubjectTitle(subjectList[index].id,title);
+            let { data } = await changeSubjectTitle(subjectList[index].id, title);
             console.log(data);
             //更新列表
             subjectList.unshift(data);
@@ -237,7 +240,7 @@ const changeSubject = async (index) => {
     activeSubjectId.value = subjectList[index].id;
     let { data } = await getQuestions(activeSubjectId.value);
     //清除QuestionList中的数据
-    questionList.length=0;
+    questionList.length = 0;
     data.array.forEach(element => {
         questionList.push(element);
     });
@@ -254,7 +257,7 @@ const sendQuestion = () => {
         userId: useUserStore.id,
         question: question.value,
         subjectId: activeSubjectId.value,
-        answer:''
+        answer: ''
     });
     es.onopen = function () {
         //打卡链接
@@ -267,11 +270,11 @@ const sendQuestion = () => {
         switch (message.status) {
             case 1:
                 //正常接收数据
-                questionList[questionList.length-1].answer+=message.content;
+                questionList[questionList.length - 1].answer += message.content;
                 break;
             case 2:
-                //更新token
-                
+            //更新token
+
 
             default:
                 break;
@@ -284,18 +287,18 @@ const sendQuestion = () => {
     }
 }
 
-const inputChat=str=>{
-    question.value=str;
+const inputChat = str => {
+    question.value = str;
 }
 
 onMounted(async () => {
-     //获得列表
+    //获得列表
     // let { data } = await getSubject();
     // data.forEach(item => subjectList.push(item));
 })
 </script>
 
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .home {
     width: 100%;
     height: 100%;
@@ -327,7 +330,7 @@ onMounted(async () => {
         padding-top: 7px;
         border-radius: 5px;
         height: 50px;
-        
+
 
         cursor: pointer;
 
@@ -393,14 +396,16 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     margin: 10px;
+
     &:hover {
-                cursor: pointer;
-                background-color: #2b2c2f;
-            }
-    .usercenter{
+        cursor: pointer;
+        background-color: #2b2c2f;
+    }
+
+    .usercenter {
         width: 100%;
         height: 40px;
-       
+
     }
 }
 
@@ -420,15 +425,16 @@ onMounted(async () => {
     width: 100%;
     bottom: 0;
 
-    .add-question-input .layui-input{
+    .add-question-input .layui-input {
         background-color: #40414f;
-        border-width:0px ;
+        border-width: 0px;
         bottom: 20px;
         color: white;
     }
-        // .add-question-icon{
-        //     background-color: #40414f;
-        // }
+
+    // .add-question-icon{
+    //     background-color: #40414f;
+    // }
 
     .question-box {
         max-width: 900px;
@@ -450,13 +456,13 @@ onMounted(async () => {
     }
 }
 
-.headercenter{
-    position: absolute; 
-    left:190px;
-    top:10px;
+.headercenter {
+    position: absolute;
+    left: 25%;
+    top: 0%;
 }
 
-.chatailogo{
+.chatailogo {
     color: white;
 }
 </style>
