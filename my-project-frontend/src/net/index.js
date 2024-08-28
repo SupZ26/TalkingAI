@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "../stores/user";
+import { walk } from "vue/compiler-sfc";
 
 const authItemName = "authorize";
 
@@ -102,7 +103,7 @@ function logout(success, failure = defaultFailure) {
     );
 }
 function get(url, success, failure = defaultFailure) {
-    url, accessHeader(), success, failure;
+    internalGet(url, accessHeader(), success, failure);
 }
 
 // function return_get(url, success, failure = defaultFailure, error = defaultError) {
@@ -150,11 +151,11 @@ export const getSubject = async () => {
 
 export const deleteSubject = (topic) => axios.delete("/api/chatAI/deleteTopic", { params: { topic } });
 
-export const changeSubjectTitle = async (id, oldtitle, newtitle) => {
+export const changeSubjectTitle = async (username, oldtitle, newtitle) => {
     await axios.post("/api/chatAI/updateTopic", {
-        id: id,
+        username: username,
         oldTopic: oldtitle,
-        newTopic: newTitle,
+        newTopic: newtitle,
     });
 };
 
@@ -169,6 +170,29 @@ export const getQuestions = (uname, topicname) => {
             topic: encodeURI(topicname), // 使用 encodeURI 编码中文字符
         },
     });
+};
+
+//问问题
+export const getAnswer = async (username, topic, model, role, content) => {
+    const url = "/api/chatAI/toChat";
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    };
+    const data = {
+        username: username,
+        topic: topic,
+        model: model,
+        messages: [
+            {
+                role: role,
+                content: content,
+            },
+        ],
+    };
+    const jsondata = JSON.stringify(data);
+    return await axios.post(url, jsondata, config);
 };
 
 //用户信息相关

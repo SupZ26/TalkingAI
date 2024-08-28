@@ -9,7 +9,7 @@
                 <!-- 话题列表 -->
                 <div class="subject-list">
                     <div class="list" :class="{ active: activeSubjectIndex.value == index }"
-                        @click="changeSubject(index, subject)" v-for="(subject, index) in subjectList">
+                        @click="changeSubject(index, subject)" v-for="(subject, index) in subjectList" :key="index">
                         <div class="left">
                             <lay-icon type="layui-icon-file-b" color="white"></lay-icon>
                         </div>
@@ -30,11 +30,14 @@
                 <template v-if="activeSubjectIndex != -1">
                     <div class="answer-item" style="margin: 10px;" v-for="question in questionList"
                         :key="question.dialog_id">
-                        <div class="question-name">
-                            <!-- <div class="left">
-                                <lay-avatar class='avatar'> A </lay-avatar>
-                            </div> -->
-                            <div class="right">{{ question.question }}</div>
+                        <div class="question-name" style="display: flex; flex-direction: row;">
+                            <div class="left">
+                                <!-- <lay-avatar class='avatar'> A </lay-avatar> -->
+                                <img src="@/assets/user.png" style="width: 50px;height: auto" alt="">
+                            </div>
+                            <div>
+                                <h3 class="right">{{ question.question }}</h3>
+                            </div>
                         </div>
                         <div class="answer" style="color: white; display: flex; flex-direction: row;">
                             <div class=" left">
@@ -159,7 +162,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user';
 import { layer } from '@layui/layui-vue';
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, nextTick } from 'vue';
 import '@/assets/index.css';
 import { createSubject, getSubject, deleteSubject, changeSubjectTitle, getUserInf } from '@/net/index.js';
 import { getQuestions } from '@/net/index';
@@ -197,7 +200,7 @@ const answerClickHandler = async ($event) => {
 //记录当前活跃的主题编号
 const activeSubjectIndex = ref(-1);
 //记录所有的话题数据
-let subjectList = reactive(["哼， 哼", "啊啊啊"]);
+let subjectList = reactive([]);
 let questionList = reactive([]);
 let question = ref('');
 // 点击添加话题处理事件
@@ -230,7 +233,12 @@ const alterSubject = async (index) => {
         value: "",
         maxLength: 32,
         async yes(layero, title) {
-            await changeSubjectTitle(store.id, old, title);
+            await changeSubjectTitle(store.username, old, title);
+            console.log(index);
+            // Vue.set(this.subjectList, index, title);
+
+            subjectList.splice(index, 1, title);
+            console.log(subjectList[index])
             layer.close(layero);
         }
     })
@@ -257,136 +265,21 @@ import { takeAccessToken } from "@/net/index"
 let event_source = null;
 import axios from 'axios';
 import { ElButton } from 'element-plus';
+import { getAnswer } from '../net';
 //问问题
-const sendQuestion = () => {
-    // 定义请求的 URL
-    const url = "/api/chatAI/toChat"; // 将此替换为您的实际 API 端点
 
-    // 定义请求数据
-    const requestData = {
-        username: "test",
-        topic: "新题目06",
-        model: "gpt-3.5-turbo",
-        messages: [
-            {
-                role: "user",
-                content: "请你说两段话，一段话不超过5个字"
-            }
-        ]
-    };
+const sendQuestion = async () => {
 
-    // 发送 POST 请求
-    axios.post(url, requestData)
-        .then(response => {
-            console.log("Success:", response.data);
-            // 在这里处理成功响应
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            // 在这里处理错误响应
-        });
-    // // 定义请求的 URL
-    // const url = "/api/chatAI/toChat"; // 将此替换为您的实际 API 端点
+    let res = await getAnswer(store.username, subjectList[activeSubjectIndex.value], 'gpt-3.5-turbo', store.role, question.value);
+    console.log(res.data.data.choices[0].message.content);
+    const questionform = {
+        username: store.username,
+        topic: subjectList[activeSubjectIndex.value],
+        question: question.value,
+        response: res.data.data.choices[0].message.content
+    }
+    questionList.push(questionform);
 
-    // // 定义请求数据
-    // const requestData = {
-    //     username: store.username,
-    //     topic: "新题目06",
-    //     model: "gpt-3.5-turbo",
-    //     messages: [
-    //         {
-    //             role: "user",
-    //             content: "请你说两段话，一段话不超过5个字"
-    //         }
-    //     ]
-    // };
-    // // 发送 POST 请求
-    // axios.post(url, requestData)
-    //     .then(response => {
-    //         console.log("Success:", response.data);
-    //         // 在这里处理成功响应
-    //     })
-    //     .catch(error => {
-    //         console.error("Error:", error);
-    //         // 在这里处理错误响应
-    //     });
-    // console.log(subjectList);
-
-    // let data_to_send = {
-    //     username: store.username,
-    //     topic: "t",//subjectList[activeSubjectIndex.value],
-    //     model: 'gpt-3.5-turbo',
-    //     messages: [
-    //         {
-    //             role: store.role,
-    //             content: question.value
-    //         }
-    //     ],
-    // };
-
-    // console.log(data_to_send);
-
-    // const response = axios.post("/api/chatAI/toChat", requestData, { headers: { Authorization: `Bearer ${takeAccessToken()}` } });
-
-    // const url = 'http://127.0.0.1:8080/api/chatAI/toChat';
-    // event_source = new EventSource(response.headers.location || "api/chatAI/toChat");
-    // this.event_source.onmessage = (event) => {
-    //     const data = JSON.parse(event.data);
-    // };
-
-    //组装回复的问题
-    // questionList.push({
-    //     username: store.username,
-    //     topic: subjectList[activeSubjectIndex.value],
-    //     model: 'gpt-3.5-turbo',
-    //     response: ''
-    // });
-    // es.onopen = function () {
-    //     //打卡链接
-
-    // }
-    // es.onmessage = function (event) {
-    //     //接受消息
-    //     //status是状态码，content是内容
-    //     console.log(event);
-    //     const message = JSON.parse(event.data);
-    //     switch (message.status) {
-    //         case 1:
-    //             //正常接收数据
-    //             questionList[questionList.length - 1].response += message.content;
-    //             break;
-    //         case 2:
-    //         //更新token
-
-
-    //         default:
-    //             break;
-    //     }
-
-    // }
-    // event_source.onmessage = function (event) {
-    //     //接受消息
-    //     //status是状态码，content是内容
-    //     console.log(event);
-    //     const message = JSON.parse(event.data);
-    //     switch (message.status) {
-    //         case 1:
-    //             //正常接收数据
-    //             questionList[questionList.length - 1].response += message.content;
-    //             break;
-    //         case 2:
-    //         //更新token
-
-
-    //         default:
-    //             break;
-    //     }
-
-    // }
-    // event_source.onclose = function () {
-    //     //关闭连接
-    //     console.log("连接已关闭");
-    // }
 }
 
 const inputChat = str => {
@@ -396,7 +289,13 @@ const inputChat = str => {
 onMounted(async () => {
     // 获得列表
     getUserInf();
-    subjectList = await getSubject();
+    let data = await getSubject();
+    data.forEach(element => {
+        subjectList.push(element);
+    })
+    await nextTick(() => {
+        console.log("更新完成");
+    })
     console.log(subjectList);
 
 
@@ -555,6 +454,7 @@ onMounted(async () => {
     height: 100%;
     top: 0;
     overflow: scroll;
+    margin-bottom: 100px;
 
     .answer-item {
         max-width: 900px;
