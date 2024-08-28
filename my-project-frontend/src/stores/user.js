@@ -17,14 +17,15 @@ export const useUserStore = defineStore("user", {
     },
     getters: {},
     actions: {
-        login(id, username, email, role, registerTime, deposit, token) {
-            this.id = id;
-            this.username = username;
-            this.password = password;
-            this.email = email;
-            this.role = role;
-            this.registerTime = registerTime;
-            this.token = token;
+        login(user) {
+            this.id = user.id;
+            this.username = user.username;
+            this.password = user.password;
+            this.email = user.email;
+            this.role = user.role;
+            this.registerTime = user.registerTime;
+            this.deposit = user.deposit;
+            this.token = user.token;
         },
 
         logout() {

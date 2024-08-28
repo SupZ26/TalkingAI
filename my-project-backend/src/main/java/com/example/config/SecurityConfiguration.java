@@ -88,7 +88,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/alipay/**").permitAll()
                         .requestMatchers("/api/token/**").permitAll()
                         .requestMatchers("/api/VX/**").permitAll()
-                        .requestMatchers("/api/chatAI/toChat").permitAll()
+                        .requestMatchers("/api/chatAI/**").permitAll()
                         .anyRequest().hasAnyRole(Const.ROLE_DEFAULT)
                 )
                 .oauth2Login(conf -> conf

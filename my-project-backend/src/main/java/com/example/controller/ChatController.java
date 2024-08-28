@@ -11,6 +11,8 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -68,7 +70,10 @@ public class ChatController {
 
     @GetMapping("/getChatContents")
     public RestBean<List<Chat>> getChatContents(@RequestParam("username") String username, @RequestParam("topic") String topic){
-        return RestBean.success(chatService.getChatContents(username,topic));
+        String decodedTopic = URLDecoder.decode(topic, StandardCharsets.UTF_8);
+        String decodedUsername = URLDecoder.decode(username, StandardCharsets.UTF_8);
+
+        return RestBean.success(chatService.getChatContents(decodedUsername,decodedTopic));
     }
 
 

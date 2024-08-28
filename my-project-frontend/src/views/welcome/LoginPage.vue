@@ -1,4 +1,5 @@
-<link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.css?spm=a313x.manage_type_myprojects.i1.9.3f1b3a81QC6xsA&file=font_4665451_zkpbelp7bfe.css">
+<link rel="stylesheet"
+    href="https://at.alicdn.com/t/c/font_4665451_zkpbelp7bfe.css?spm=a313x.manage_type_myprojects.i1.9.3f1b3a81QC6xsA&file=font_4665451_zkpbelp7bfe.css">
 <template>
     <div style="text-align: center; margin: 0 80px">
         <div style="margin-top: 40px">
@@ -13,59 +14,53 @@
                                 <User />
                             </el-icon>
                         </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input
-                        v-model="form.password"
-                        type="password"
-                        maxlength="20"
-                        style="margin-top: 10px"
-                        placeholder="密码"
-                    >
-                        <template #prefix>
+</el-input>
+</el-form-item>
+<el-form-item prop="password">
+    <el-input v-model="form.password" type="password" maxlength="20" style="margin-top: 10px" placeholder="密码">
+        <template #prefix>
                             <el-icon>
                                 <Lock />
                             </el-icon>
                         </template>
-                    </el-input>
-                </el-form-item>
-                <el-row style="margin-top: 5px">
-                    <el-col :span="12" style="text-align: left">
-                        <el-form-item prop="remember">
-                            <el-checkbox v-model="form.remember" label="记住我" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12" style="text-align: right">
-                        <el-link @click="router.push('/forget')">忘记密码？</el-link>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </div>
-        <div style="margin-top: 20px">
-            <el-button @click="userLogin()" style="width: 270px" type="success" plain>立即登录</el-button>
-        </div>
-        <el-divider>
-            <span  style="color: red; font-size: 13px; " >没有账号</span>
-        </el-divider>
-        <div>
-            <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
-        </div>
-        <!--TODO 这里的按钮进作为临时测试微信登录的按钮，修改为正式网页时需进行替换-->
-      <!--
+    </el-input>
+</el-form-item>
+<el-row style="margin-top: 5px">
+    <el-col :span="12" style="text-align: left">
+        <el-form-item prop="remember">
+            <el-checkbox v-model="form.remember" label="记住我" />
+        </el-form-item>
+    </el-col>
+    <el-col :span="12" style="text-align: right">
+        <el-link @click="router.push('/forget')">忘记密码？</el-link>
+    </el-col>
+</el-row>
+</el-form>
+</div>
+<div style="margin-top: 20px">
+    <el-button @click="userLogin()" style="width: 270px" type="success" plain>立即登录</el-button>
+</div>
+<el-divider>
+    <span style="color: red; font-size: 13px; ">没有账号</span>
+</el-divider>
+<div>
+    <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
+</div>
+<!--TODO 这里的按钮进作为临时测试微信登录的按钮，修改为正式网页时需进行替换-->
+<!--
         <div>
             <el-button style="width: 270px" @click="router.push('/WeChatLogin')" type="warning" plain
                 >微信登录</el-button
             >
         </div>-->
-      <div class="iconfont">
-        <!--
+<div class="iconfont">
+    <!--
         <el-button @click=githubLogin() ,type="warning" >github登录
         </el-button>-->
-        <span class="icon-weixin"></span>
-        <span class="icon-github" @click=githubLogin()></span>
-      </div>
-    </div>
+    <span class="icon-weixin"></span>
+    <span class="icon-github" @click=githubLogin()></span>
+</div>
+</div>
 
 </template>
 
@@ -92,7 +87,7 @@ function userLogin() {
     formRef.value.validate((isValid) => {
         if (isValid) {
             //TODO test
-            login(form.username, form.password, form.remember, () => router.push("/a"));
+            login(form.username, form.password, form.remember, () => router.push("/home"));
         }
     });
 }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useUserStore } from "../stores/user";
 
 const authItemName = "authorize";
 
@@ -19,7 +20,7 @@ const defaultFailure = (message, status, url) => {
     ElMessage.warning(message);
 };
 
-function takeAccessToken() {
+export function takeAccessToken() {
     const str = localStorage.getItem(authItemName) || sessionStorage.getItem(authItemName);
     if (!str) return null;
     const authObj = JSON.parse(str);
@@ -100,54 +101,88 @@ function logout(success, failure = defaultFailure) {
         failure
     );
 }
-
 function get(url, success, failure = defaultFailure) {
-    internalGet(url, accessHeader(), success, failure);
+    url, accessHeader(), success, failure;
 }
+
+// function return_get(url, success, failure = defaultFailure, error = defaultError) {
+//     return new Promise((resolve, reject) => {
+//         axios
+
+//             .get(url, { headers: accessHeader() })
+
+//             .then(({ data }) => {
+//                 if (data.code === 200) {
+//                     success(data.data);
+
+//                     resolve(data.data); // 解析Promise，并返回数据
+//                 } else {
+//                     failure(data.message, data.code, url);
+
+//                     reject(new Error(data.message)); // 拒绝Promise，并传递错误
+//                 }
+//             })
+
+//             .catch((err) => {
+//                 error(err);
+
+//                 reject(err); // 拒绝Promise，并传递错误
+//             });
+//     });
+// }
 
 function unauthorized() {
     return !takeAccessToken();
 }
 
+axios.defaults.headers.common["Authorization"] = `Bearer ${takeAccessToken()}`;
+
 //主题相关接口
-export const createSubject= async(title)=>{
-    return axios.post('',{ title });
-}
+export const createSubject = async (title) => {
+    return axios.post("", { title });
+};
 
-export const getSubject=()=>axios.get('/api/chatAI/findAllTopic');
+export const getSubject = async () => {
+    let data = await axios.get("/api/chatAI/findAllTopic");
+    // console.log(data.data.data);
+    return data.data.data;
+};
 
-export const deleteSubject=topic=>axios.delete('/api/chatAI/deleteTopic',{params:{topic}});
+export const deleteSubject = (topic) => axios.delete("/api/chatAI/deleteTopic", { params: { topic } });
 
-export const changeSubjectTitle=async(id,oldtitle,newtitle)=>{
-    await axios.post(
-        '/api/chatAI/updateTopic',{
-            id:id,
-            oldTopic:oldtitle,
-            newTopic:newTitle
-        }
-    )
-}
+export const changeSubjectTitle = async (id, oldtitle, newtitle) => {
+    await axios.post("/api/chatAI/updateTopic", {
+        id: id,
+        oldTopic: oldtitle,
+        newTopic: newTitle,
+    });
+};
 
 //问题相关
-export const getQuestions = (uname,topicname) => {
-    return axios.get('/api/chatAI/getChatContents', {
-        params:{
-            username:uname,
-            topic:topicname
-        }
-    })
-}
+export const getQuestions = (uname, topicname) => {
+    return axios.get("/api/chatAI/getChatContents", {
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+        },
+        params: {
+            username: uname,
+            topic: encodeURI(topicname), // 使用 encodeURI 编码中文字符
+        },
+    });
+};
 
 //用户信息相关
-export const getUserInf=async()=>{
-    let{data}=await axios.get('/api/accounts/findAllDetails').data;
-    saveUserToPinia(data);
-}
+export const getUserInf = async () => {
+    get("/api/accounts/findAllDetails", (data) => {
+        console.log(data);
+        saveUserToPinia(data);
+    });
+};
 
-export const saveUserToPinia = user => {
+export const saveUserToPinia = (user) => {
     const store = useUserStore();
     // user.token = user.token.token;
     store.login(user);
-}
+};
 
 export { post, get, login, logout, unauthorized };

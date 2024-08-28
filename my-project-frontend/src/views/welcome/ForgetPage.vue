@@ -17,7 +17,9 @@
                         <el-form-item prop="email">
                             <el-input v-model="form.email" type="email" placeholder="电子邮件地址">
                                 <template #prefix>
-                                    <el-icon><Message /></el-icon>
+                                    <el-icon>
+                                        <Message />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-form-item>
@@ -26,16 +28,15 @@
                                 <el-col :span="17">
                                     <el-input v-model="form.code" :maxlength="6" type="text" placeholder="请输入验证码">
                                         <template #prefix>
-                                            <el-icon><EditPen /></el-icon>
+                                            <el-icon>
+                                                <EditPen />
+                                            </el-icon>
                                         </template>
                                     </el-input>
                                 </el-col>
                                 <el-col :span="5">
-                                    <el-button
-                                        type="success"
-                                        @click="validateEmail"
-                                        :disabled="!isEmailValid || coldTime > 0"
-                                    >
+                                    <el-button type="success" @click="validateEmail"
+                                        :disabled="!isEmailValid || coldTime > 0">
                                         {{ coldTime > 0 ? "请稍后 " + coldTime + " 秒" : "获取验证码" }}
                                     </el-button>
                                 </el-col>
@@ -48,33 +49,30 @@
                 </div>
             </div>
         </transition>
-
-
-
-      <transition name="el-fade-in-linear" mode="out-in">
-        <div style="text-align: center; margin: 0 80px; height: 100%" v-if="active === 0">
-          <div style="margin-top: 20px">
-            <div style="font-size: 25px; font-weight: bold">重置密码</div>
-          </div>
-
-                <div style="margin-top: 10px">
+        <transition name="el-fade-in-linear" mode="out-in">
+            <div style="text-align: center; margin: 0 80px; height: 100%" v-if="active === 1">
+                <div style="margin-top: 20px">
+                    <div style="font-size: 25px; font-weight: bold">重置密码</div>
+                    <div style="font-size: 14px; color: grey">请填写您的新密码，务必牢记，防止丢失</div>
+                </div>
+                <div style="margin-top: 20px">
                     <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                         <el-form-item prop="password">
                             <el-input v-model="form.password" :maxlength="16" type="password" placeholder="新密码">
                                 <template #prefix>
-                                    <el-icon><Lock /></el-icon>
+                                    <el-icon>
+                                        <Lock />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="password_repeat">
-                            <el-input
-                                v-model="form.password_repeat"
-                                :maxlength="16"
-                                type="password"
-                                placeholder="重复新密码"
-                            >
+                            <el-input v-model="form.password_repeat" :maxlength="16" type="password"
+                                placeholder="重复新密码">
                                 <template #prefix>
-                                    <el-icon><Lock /></el-icon>
+                                    <el-icon>
+                                        <Lock />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-form-item>

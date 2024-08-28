@@ -24,6 +24,11 @@ const router = createRouter({
                     name: "welcome-forget",
                     component: () => import("@/views/welcome/ForgetPage.vue"),
                 },
+                {
+                    path: "test",
+                    name: "test",
+                    component: () => import("@/views/view.vue"),
+                },
             ],
         },
         {
