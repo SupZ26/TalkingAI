@@ -158,7 +158,7 @@ import { useUserStore } from '@/stores/user';
 import { layer } from '@layui/layui-vue';
 import { ref, reactive, onMounted } from 'vue';
 import '@/assets/index.css';
-import { createSubject, getSubject, deleteSubject, changeSubjectTitle } from '@/net/index.js';
+import { createSubject, getSubject, deleteSubject, changeSubjectTitle,getUserInf } from '@/net/index.js';
 import { getQuestions } from '@/net/index';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
@@ -300,6 +300,7 @@ const inputChat = str => {
 
 onMounted(async () => {
     // 获得列表
+    getUserInf();
     let { data } = await getSubject();
     data.forEach(item => subjectList.push(item));
 })
