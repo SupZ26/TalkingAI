@@ -11,8 +11,6 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -28,8 +26,8 @@ public class ChatController {
      * @return
      */
     @PostMapping("/toChat")
-    public void toChat(@RequestBody RequestChatVO requestChatVO){
-        chatService.toChat(requestChatVO);
+    public RestBean<AIResponseChatVO> toChat(@RequestBody RequestChatVO requestChatVO){
+        return RestBean.success(chatService.toChat(requestChatVO));
     }
 
     /**
@@ -68,12 +66,15 @@ public class ChatController {
         }
     }
 
+    /**
+     * 查询用户在相关主题下的对话记录
+     * @param username
+     * @param topic
+     * @return
+     */
     @GetMapping("/getChatContents")
-    public RestBean<List<Chat>> getChatContents(@RequestParam("username") String username, @RequestParam("topic") String topic){
-        String decodedTopic = URLDecoder.decode(topic, StandardCharsets.UTF_8);
-        String decodedUsername = URLDecoder.decode(username, StandardCharsets.UTF_8);
-
-        return RestBean.success(chatService.getChatContents(decodedUsername,decodedTopic));
+    public RestBean<List<Chat>> getChatContents(@RequestParam("username") String username,@RequestParam("topic") String topic){
+        return RestBean.success(chatService.getChatContents(username,topic));
     }
 
 

@@ -126,7 +126,7 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
      */
     public String now_content;
     @Override
-    public void toChat(RequestChatVO requestChatVO) {
+    public AIResponseChatVO toChat(RequestChatVO requestChatVO) {
         String username = requestChatVO.getUsername();
         String topic = requestChatVO.getTopic();
         String token = tokenService.getTokenIdByUsername(username);
@@ -134,10 +134,10 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
             //之前没有对话的情况，不需要考虑联系上下文
             now_content = requestChatVO.getMessages().get(0).getContent();
             //向ai发出聊天，等待回应,使用post方式
-            /*AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
+            AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
             BeanUtils.copyProperties(requestChatVO,aiRequestChatVO);
-            return aIChat(aiRequestChatVO,token,username,topic);*/
-            question(requestChatVO,now_content,new SseEmitter());
+            return aIChat(aiRequestChatVO,token,username,topic);
+            /*question(requestChatVO,now_content,new SseEmitter());*/
 
         }else {
             //之前有过对话，需要考虑上下文
@@ -155,10 +155,10 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
             String content = String.valueOf(later_content);
             requestChatVO.getMessages().get(0).setContent(content);
             //发送信息进行ai聊天
-            /*AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
+            AIRequestChatVO aiRequestChatVO = new AIRequestChatVO();
             BeanUtils.copyProperties(requestChatVO,aiRequestChatVO);
-            return aIChat(aiRequestChatVO,token,username,topic);*/
-            question(requestChatVO,content,new SseEmitter());
+            return aIChat(aiRequestChatVO,token,username,topic);
+            /*question(requestChatVO,content,new SseEmitter());*/
         }
 
     }
@@ -170,25 +170,26 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
      */
     @Override
     public AIResponseChatVO aIChat(AIRequestChatVO aiRequestChatVO,String token,String username,String topic) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
+        // 创建请求
+        HttpResponse response = HttpRequest.post(gpt_url)
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(JSON.toJSONString(aiRequestChatVO)) // 将对象转换为 JSON 字符串
+                .execute();
 
-        HttpEntity<AIRequestChatVO> entity = new HttpEntity<>(aiRequestChatVO, headers);
-        ResponseEntity<String> response = restTemplate.exchange(gpt_url, HttpMethod.POST, entity, String.class);
+        // 获取响应内容
+        String responseBody = response.body();
+        System.out.println(responseBody);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            //把新增的对话信息加入到数据库中
-            //发出的问题
-            String question = aiRequestChatVO.getMessages().get(0).getContent();
-            //回答的问题
-            AIResponseChatVO vo = JSON.parseObject(response.getBody(), AIResponseChatVO.class);
-            String res = vo.getChoices().get(0).getMessage().getContent();
-            addCurrentContents(username,topic,now_content,res);
-            return vo;
-        } else {
-            throw new RuntimeException("Failed to get token: " + response.getStatusCode());
-        }
+        //把新增的对话信息加入到数据库中
+        //发出的问题
+        String question = aiRequestChatVO.getMessages().get(0).getContent();
+        //回答的问题
+        AIResponseChatVO vo = JSONUtil.toBean(responseBody, AIResponseChatVO.class);
+
+        String res = vo.getChoices().get(0).getMessage().getContent();
+        addCurrentContents(username,topic,now_content,res);
+        return vo;
     }
 
     /**

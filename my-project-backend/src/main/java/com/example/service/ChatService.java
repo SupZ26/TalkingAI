@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public interface ChatService extends IService<Chat> {
     //用户AI聊天
-    void toChat(RequestChatVO requestChatVO);
+    AIResponseChatVO toChat(RequestChatVO requestChatVO);
 
     //查询用户在相关主题下的对话记录
     List<Chat> getChatContents(String username, String topic);
